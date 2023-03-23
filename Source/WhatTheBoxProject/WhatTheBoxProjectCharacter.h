@@ -37,8 +37,29 @@ class AWhatTheBoxProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* FireAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UInputAction* ChangeAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* BoxBodyComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* CutterKnifeComp;
+
+	UPROPERTY()
+	class UUserWidget* crosshairUI;
+
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> crosshairFactory;
+
 public:
 	AWhatTheBoxProjectCharacter();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool isUsingKnife = false;
 	
 
 protected:
@@ -48,6 +69,10 @@ protected:
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
+
+	void Fire();
+
+	void ChangeWeapon();
 			
 
 protected:
