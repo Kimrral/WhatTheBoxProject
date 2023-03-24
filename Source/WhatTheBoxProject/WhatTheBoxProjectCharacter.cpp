@@ -4,6 +4,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "PlayerBullet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
@@ -156,12 +157,20 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
+	if(bCanFire==false)
+	{
+		return;
+	}
 	if (isUsingKnife == true)
 	{
-
+		ResetFireCoolDown();
 	}
 	else
 	{
+		FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector()*300.0f - FollowCamera->GetUpVector()*30.0f;
+		GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+		bCanFire=false;
+		ResetFireCoolDown();
 
 	}
 }
