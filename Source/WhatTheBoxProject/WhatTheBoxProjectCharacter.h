@@ -60,7 +60,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool isUsingKnife = false;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bCanFire = true;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class APlayerBullet> bulletFactory;
+
 
 protected:
 
@@ -73,6 +77,11 @@ protected:
 	void Fire();
 
 	void ChangeWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ResetFireCoolDown();
+
+
 			
 
 protected:
