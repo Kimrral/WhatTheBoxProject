@@ -182,10 +182,11 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
-	if(bCanFire==false||curBulletCount<=0)
+	if(bCanFire==false)
 	{
 		return;
 	}
+	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
@@ -201,18 +202,27 @@ void AWhatTheBoxProjectCharacter::Fire()
 		/*UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, pastPos.GetLocation(), FRotator(-51.73, 69.428, -67.26), false, false, 0.3f, true, EMoveComponentAction::Type::Move, LatentInfo);*/
 		
 		bCanFire=false;
-		ResetFireCoolDown();
+		ResetKnifeCoolDown();
 
 
 	}
+	// if Player Using Gun
 	else
 	{
-		FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector()*300.0f - FollowCamera->GetUpVector()*30.0f;
-		GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
-		curBulletCount--;
-		bCanFire=false;
-		ResetFireCoolDown();
-
+		// if Player Using Gun and have ammo
+		if (curBulletCount > 0)
+		{
+			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
+			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			curBulletCount--;
+			
+		}
+		// if Player Using Gun and have no ammo
+		else
+		{
+			bCanFire = false;
+			ResetFireCoolDown();
+		}
 	}
 }
 

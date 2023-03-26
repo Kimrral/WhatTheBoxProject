@@ -89,6 +89,9 @@ protected:
 	void ResetFireCoolDown();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void ResetKnifeCoolDown();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void ResetKnifeLocation();
 
 	UFUNCTION(BlueprintImplementableEvent)
