@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "PlayerBullet.h"
+#include "Components/Image.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
@@ -86,9 +87,15 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 		}
 	}
 
+	GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+
 	CutterKnifeComp->SetVisibility(false);
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
+	HPUI = CreateWidget<UUserWidget>(GetWorld(), HPUIFactory);
+	HPUI->AddToViewport();
+	BulCountUI = CreateWidget<UUserWidget>(GetWorld(), BulCountUIFactory);
+	BulCountUI->AddToViewport();
 
 	curBulletCount = maxBulletCount;
 	
@@ -212,6 +219,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		// if Player Using Gun and have ammo
 		if (curBulletCount > 0)
 		{
+			SetImageAlphaForCurBullets();
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			curBulletCount--;
@@ -222,6 +230,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		{
 			bCanFire = false;
 			ResetFireCoolDown();
+		
 		}
 	}
 }
@@ -232,10 +241,12 @@ void AWhatTheBoxProjectCharacter::ChangeWeapon()
 	{
 		CutterKnifeComp->SetVisibility(true);
 		isUsingKnife = true;
+		GetCharacterMovement()->MaxWalkSpeed = 650.0f;
 	}
 	else
 	{
 		CutterKnifeComp->SetVisibility(false);
 		isUsingKnife = false;
+		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 	}
 }
