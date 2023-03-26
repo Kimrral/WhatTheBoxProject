@@ -14,13 +14,27 @@ void AWhatTheBoxGameModeBase::BeginPlay()
 void AWhatTheBoxGameModeBase::GameStartCountDown()
 {
 	// 게임시간이 0초가 아니라면 1초 줄인다.
-	if (GameTime > 0)
+	if (GameTimeSec > 0)
 	{
-		GameTime--;
+		GameTimeSec--;
+		// 만약 0초가 되면 1분을 줄인다.
+		if (GameTimeSec == 0)
+		{
+			GameTimeMin--;
+		}
 	}
-	else
+	// 만약 0초가 되면 결과창을 띄운다.
+	else if (GameTimeSec == 0 && GameTimeMin == 0)
 	{
-		// 게임시간이 0초가 되면 타이머를 멈춘다.
-		GetWorldTimerManager().ClearTimer(PlayTimeCount);
+		if (Main_UI != nullptr)
+		{
+			//Main_UI->RemoveFromViewport();
+		}
+		ShowResultUI();
 	}
+}
+
+void AWhatTheBoxGameModeBase::ShowResultUI()
+{
+	
 }
