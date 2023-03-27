@@ -49,13 +49,21 @@ class AWhatTheBoxProjectCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* CutterKnifeComp;
 
-	UPROPERTY()
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UUserWidget* crosshairUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UUserWidget* BulCountUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UUserWidget* HPUI;
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> crosshairFactory;
+		UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> HPUIFactory;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> BulCountUIFactory;
 
-public:
 	AWhatTheBoxProjectCharacter();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -68,6 +76,10 @@ public:
 		int32 maxBulletCount = 3;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int32 curBulletCount;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		int32 maxHP = 3;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		int32 curHP;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APlayerBullet> bulletFactory;
 
@@ -89,7 +101,16 @@ protected:
 	void ResetFireCoolDown();
 
 	UFUNCTION(BlueprintImplementableEvent)
+		void ResetKnifeCoolDown();
+
+	UFUNCTION(BlueprintImplementableEvent)
 		void ResetKnifeLocation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetImageAlphaForCurBullets();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void SetImageAlphaForHP();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void BoxUp();

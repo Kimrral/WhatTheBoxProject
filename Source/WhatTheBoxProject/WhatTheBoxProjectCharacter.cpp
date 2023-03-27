@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "PlayerBullet.h"
+#include "Components/Image.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
@@ -86,9 +87,15 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 		}
 	}
 
+	GetCharacterMovement()->MaxWalkSpeed = 450.0f;
+
 	CutterKnifeComp->SetVisibility(false);
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
+	HPUI = CreateWidget<UUserWidget>(GetWorld(), HPUIFactory);
+	HPUI->AddToViewport();
+	BulCountUI = CreateWidget<UUserWidget>(GetWorld(), BulCountUIFactory);
+	BulCountUI->AddToViewport();
 
 	curBulletCount = maxBulletCount;
 	
@@ -182,10 +189,11 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
-	if(bCanFire==false||curBulletCount<=0)
+	if(bCanFire==false)
 	{
 		return;
 	}
+	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
@@ -201,18 +209,29 @@ void AWhatTheBoxProjectCharacter::Fire()
 		/*UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, pastPos.GetLocation(), FRotator(-51.73, 69.428, -67.26), false, false, 0.3f, true, EMoveComponentAction::Type::Move, LatentInfo);*/
 		
 		bCanFire=false;
-		ResetFireCoolDown();
+		ResetKnifeCoolDown();
 
 
 	}
+	// if Player Using Gun
 	else
 	{
-		FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector()*300.0f - FollowCamera->GetUpVector()*30.0f;
-		GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
-		curBulletCount--;
-		bCanFire=false;
-		ResetFireCoolDown();
-
+		// if Player Using Gun and have ammo
+		if (curBulletCount > 0)
+		{
+			SetImageAlphaForCurBullets();
+			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
+			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			curBulletCount--;
+			
+		}
+		// if Player Using Gun and have no ammo
+		else
+		{
+			bCanFire = false;
+			ResetFireCoolDown();
+		
+		}
 	}
 }
 
@@ -222,10 +241,12 @@ void AWhatTheBoxProjectCharacter::ChangeWeapon()
 	{
 		CutterKnifeComp->SetVisibility(true);
 		isUsingKnife = true;
+		GetCharacterMovement()->MaxWalkSpeed = 650.0f;
 	}
 	else
 	{
 		CutterKnifeComp->SetVisibility(false);
 		isUsingKnife = false;
+		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 	}
 }
