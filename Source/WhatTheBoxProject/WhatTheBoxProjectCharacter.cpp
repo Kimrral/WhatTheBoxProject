@@ -20,6 +20,9 @@
 
 AWhatTheBoxProjectCharacter::AWhatTheBoxProjectCharacter()
 {
+	PrimaryActorTick.bCanEverTick=true;
+
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(50.f, 50.0f);
 		
@@ -92,14 +95,23 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	CutterKnifeComp->SetVisibility(false);
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
-	HPUI = CreateWidget<UUserWidget>(GetWorld(), HPUIFactory);
-	HPUI->AddToViewport();
-	BulCountUI = CreateWidget<UUserWidget>(GetWorld(), BulCountUIFactory);
-	BulCountUI->AddToViewport();
+	//HPUI = CreateWidget<UUserWidget>(GetWorld(), HPUIFactory);
+	//HPUI->AddToViewport();
+	//BulCountUI = CreateWidget<UUserWidget>(GetWorld(), BulCountUIFactory);
+	//BulCountUI->AddToViewport();
 
 	curBulletCount = maxBulletCount;
 	
 }
+
+
+void AWhatTheBoxProjectCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	SetImageAlphaForCurBullets();
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -219,7 +231,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		// if Player Using Gun and have ammo
 		if (curBulletCount > 0)
 		{
-			SetImageAlphaForCurBullets();
+			
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			curBulletCount--;

@@ -66,6 +66,8 @@ public:
 
 	AWhatTheBoxProjectCharacter();
 
+	void Tick(float DeltaSeconds);
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool isUsingKnife = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
