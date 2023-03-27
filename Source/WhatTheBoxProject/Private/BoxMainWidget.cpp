@@ -5,6 +5,7 @@
 #include "WhatTheBoxGameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
+#include "Components/EditableTextBox.h"
 #include "../WhatTheBoxProjectCharacter.h"
 
 void UBoxMainWidget::NativeConstruct()
@@ -42,4 +43,13 @@ void UBoxMainWidget::PrintChatLog(FString Chat)
 {
 	// 채팅로그를 출력한다.
 	TXT_ChatLog->SetText(FText::FromString(Chat));
+}
+
+void UBoxMainWidget::OnChatInputEnter()
+{
+	// 채팅 입력창에서 입력한 텍스트 가져오기
+	FString Chat = TXT_ChatInput->GetText().ToString();
+
+	// 채팅로그에 출력
+	PrintChatLog(Chat);
 }

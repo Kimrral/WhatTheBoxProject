@@ -50,5 +50,8 @@ public:
 	void PrintKillLog(FString Killer, FString Victim);
 	// 채팅 인풋에 채팅치면 채팅로그에 출력
 	void PrintChatLog(FString Chat);
+	// 채팅 입력창에 엔터키 누르면 이벤트 함수
+	UFUNCTION()
+		void OnChatInputEnter();
 
 };

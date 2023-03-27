@@ -34,11 +34,36 @@ void AWhatTheBoxGameModeBase::GameStartCountDown()
 		if (GameTimeSec == 0)
 		{
 			GameTimeMin--;
-			GameTimeSec = 59;
+			GameTimeSec = 60;
+			if (GameTimeMin == 5 && GameTimeSec == 60)
+			{
+				GameTimeMin = 4;
+				GameTimeSec = 59;
+			}
+			else if (GameTimeMin == 4 && GameTimeSec == 0)
+			{
+				GameTimeMin = 3;
+				GameTimeSec = 59;
+			}
+			else if (GameTimeMin == 3 && GameTimeSec == 0)
+			{
+				GameTimeMin = 2;
+				GameTimeSec = 59;
+			}
+			else if (GameTimeMin == 2 && GameTimeSec == 0)
+			{
+				GameTimeMin = 1;
+				GameTimeSec = 59;
+			}
+			else if (GameTimeMin == 1 && GameTimeSec == 0)
+			{
+				GameTimeMin = 0;
+				GameTimeSec = 59;
+			}
 		}
 	}
 	// 만약 0초가 되면 결과창을 띄운다.
-	else if (GameTimeSec == 0 && GameTimeMin == 0)
+	else if (GameTimeSec == 1 && GameTimeMin == 0)
 	{
 		// 타이머를 종료
 		GetWorldTimerManager().ClearTimer(PlayTimeCount);
@@ -54,4 +79,7 @@ void AWhatTheBoxGameModeBase::ShowResultUI()
 {
 	// 마우스 커서를 보이게 한다.
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	// 플레이어를 멈춘다.
+	PlayerController->SetCinematicMode(true, false, false, true, true);
+
 }
