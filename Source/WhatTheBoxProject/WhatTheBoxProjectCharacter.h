@@ -60,12 +60,23 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool isUsingKnife = false;
-	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bCanFire = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bBoxCanMove = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		int32 maxBulletCount = 3;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		int32 curBulletCount;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class APlayerBullet> bulletFactory;
+
 
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
+	void MoveRelease(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
@@ -73,6 +84,19 @@ protected:
 	void Fire();
 
 	void ChangeWeapon();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ResetFireCoolDown();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void ResetKnifeLocation();
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void BoxUp();
+	UFUNCTION(BlueprintImplementableEvent)
+		void BoxDown();
+
+
 			
 
 protected:

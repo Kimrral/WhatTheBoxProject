@@ -4,12 +4,14 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
+#include "PlayerBullet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -59,10 +61,11 @@ AWhatTheBoxProjectCharacter::AWhatTheBoxProjectCharacter()
 	BoxBodyComp->SetRelativeScale3D(boxScale);
 
 	CutterKnifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CutterKnifeComp"));
-	CutterKnifeComp->SetupAttachment(RootComponent);
-	CutterKnifeComp->SetRelativeLocation(FVector(48.123, 14.444, -12.678));
-	CutterKnifeComp->SetRelativeRotation(FRotator(0, -180, 0));
-	CutterKnifeComp->SetRelativeScale3D(FVector(0.05));
+	CutterKnifeComp->SetupAttachment(BoxBodyComp, TEXT("KnifeSocket"));
+	CutterKnifeComp->SetRelativeLocation(FVector(-76.92,-15.63, 2.06));
+	CutterKnifeComp->SetRelativeRotation(FRotator(-51.73, 69.428, -67.26));
+	FVector KnifeScale = FVector(0.08f, 0.1f, 0.05f);
+	CutterKnifeComp->SetRelativeScale3D(KnifeScale);
 
 	
 
@@ -87,6 +90,7 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
 
+	curBulletCount = maxBulletCount;
 	
 }
 
@@ -104,6 +108,7 @@ void AWhatTheBoxProjectCharacter::SetupPlayerInputComponent(class UInputComponen
 
 		//Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AWhatTheBoxProjectCharacter::Move);
+		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Completed, this, &AWhatTheBoxProjectCharacter::MoveRelease);
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AWhatTheBoxProjectCharacter::Look);
@@ -139,6 +144,27 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+
+	
+	/*BoxBodyComp->SetRelativeLocation(FVector(0, 0, 5));
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
+	BoxBodyComp->SetRelativeLocation(FVector(0, 0, -5));*/
+	
+	
+}
+
+void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
+{
+	/*FVector2D MovementVector = Value.Get<FVector2D>();
+	auto MovementX = MovementVector.X;
+	auto MovementY = MovementVector.Y;
+	MovementVector.X = 0;
+	MovementVector.Y = 0;*/
+
+
+
 }
 
 void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
@@ -156,12 +182,36 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
+	if(bCanFire==false||curBulletCount<=0)
+	{
+		return;
+	}
 	if (isUsingKnife == true)
 	{
+		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
+		FLatentActionInfo LatentInfo;
+		LatentInfo.CallbackTarget = this;
+		
+		auto pastPos = CutterKnifeComp->GetRelativeTransform();
+		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);
+		ResetKnifeLocation();
+		
+
+		
+		/*UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, pastPos.GetLocation(), FRotator(-51.73, 69.428, -67.26), false, false, 0.3f, true, EMoveComponentAction::Type::Move, LatentInfo);*/
+		
+		bCanFire=false;
+		ResetFireCoolDown();
+
 
 	}
 	else
 	{
+		FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector()*300.0f - FollowCamera->GetUpVector()*30.0f;
+		GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+		curBulletCount--;
+		bCanFire=false;
+		ResetFireCoolDown();
 
 	}
 }
