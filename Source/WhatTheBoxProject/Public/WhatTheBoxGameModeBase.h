@@ -27,6 +27,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Widget")
 		class UBoxMainWidget* Main_UI;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UBoxMainWidget> MainWidget;
+
 	// 플레이어
 	UPROPERTY(BlueprintReadWrite, Category = "Player")
 		class AWhatTheBoxProjectCharacter* Player;
@@ -40,7 +43,7 @@ public:
 
 	// 시간 초
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 GameTimeSec = 60;
+		int32 GameTimeSec = 1;
 	// 시간 분
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 GameTimeMin = 5;
@@ -56,5 +59,6 @@ public:
 	//게임 시간 끝나면 결과창 팝업
 	void ShowResultUI();
 
+	FTimerHandle TimerHandle;
 	FTimerHandle PlayTimeCount;
 };

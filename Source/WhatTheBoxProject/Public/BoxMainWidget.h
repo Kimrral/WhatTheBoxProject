@@ -48,5 +48,7 @@ public:
 	void PrintRemainingTime();
 	// 플레이어 죽을 시, 킬로그 출력
 	void PrintKillLog(FString Killer, FString Victim);
+	// 채팅 인풋에 채팅치면 채팅로그에 출력
+	void PrintChatLog(FString Chat);
 
 };
