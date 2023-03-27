@@ -84,6 +84,8 @@ public:
 		int32 curHP;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APlayerBullet> bulletFactory;
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* fireEmitterTemplate;
 
 
 protected:

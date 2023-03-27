@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "Blueprint/UserWidget.h"
+#include "Kismet/GameplayStatics.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
@@ -232,8 +233,11 @@ void AWhatTheBoxProjectCharacter::Fire()
 		if (curBulletCount > 0)
 		{
 			
-			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
+			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
+			//FVector EmitterForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
+			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
 			curBulletCount--;
 			
 		}
