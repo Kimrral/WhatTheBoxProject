@@ -15,6 +15,7 @@ class WHATTHEBOXPROJECT_API USearchWidget : public UUserWidget
 	GENERATED_BODY()
 
 protected:
+	
 	virtual void NativeConstruct() override;
 
 public:
@@ -32,6 +33,12 @@ public:
 
 private:
 	UFUNCTION()
-		void BackToMenu();
+	void BackToMenu();
+
+	UFUNCTION()
+	void QuickPlay();
+
+	UFUNCTION()
+	void CreateRoom();
 
 };

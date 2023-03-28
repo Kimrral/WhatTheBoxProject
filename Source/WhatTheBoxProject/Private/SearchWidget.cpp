@@ -15,10 +15,20 @@ void USearchWidget::NativeConstruct()
 	editText_RoomName->SetText(FText::FromString(""));
 
 	btn_BackToMenu->OnClicked.AddDynamic(this, &USearchWidget::BackToMenu);
+	btn_QuickPlay->OnClicked.AddDynamic(this, &USearchWidget::QuickPlay);
+	btn_CreateRoom->OnClicked.AddDynamic(this, &USearchWidget::CreateRoom);
 
 }
 
 void USearchWidget::BackToMenu()
 {
 	enteranceWidget->widgetSwitcher->SetActiveWidgetIndex(0);
+}
+
+void USearchWidget::QuickPlay()
+{
+}
+
+void USearchWidget::CreateRoom()
+{
 }
