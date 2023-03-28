@@ -12,7 +12,7 @@ UCLASS(config=Game)
 class AWhatTheBoxProjectCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
+public:
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
@@ -47,9 +47,12 @@ class AWhatTheBoxProjectCharacter : public ACharacter
 		class UStaticMeshComponent* BoxBodyComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+		class UStaticMeshComponent* DestroyedBoxBodyComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* CutterKnifeComp;
 
-public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UUserWidget* crosshairUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -72,8 +75,8 @@ public:
 		bool isUsingKnife = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		bool bBoxCanMove = true;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		//bool bBoxCanMove = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int32 maxBulletCount = 3;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -84,6 +87,8 @@ public:
 		int32 curHP;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APlayerBullet> bulletFactory;
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class AKnifeDamageBox> knifeBoxFactory;
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* fireEmitterTemplate;
 

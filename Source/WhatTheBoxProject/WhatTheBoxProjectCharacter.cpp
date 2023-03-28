@@ -5,6 +5,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
 #include "PlayerBullet.h"
+#include "KnifeDamageBox.h"
 #include "Components/Image.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
@@ -65,6 +66,14 @@ AWhatTheBoxProjectCharacter::AWhatTheBoxProjectCharacter()
 	FVector boxScale = FVector(1, 2, 2.5);
 	BoxBodyComp->SetRelativeScale3D(boxScale);
 
+	DestroyedBoxBodyComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("DestroyedBoxBodyComp"));
+	DestroyedBoxBodyComp->SetupAttachment(RootComponent);
+	DestroyedBoxBodyComp->SetRelativeLocation(FVector(-4.507673, -297.982111, -51.94783));
+	FVector DestboxScale = FVector(10.25, 20.25, 34.5);
+	DestroyedBoxBodyComp->SetRelativeScale3D(DestboxScale);
+	DestroyedBoxBodyComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	DestroyedBoxBodyComp->SetVisibility(false);
+
 	CutterKnifeComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CutterKnifeComp"));
 	CutterKnifeComp->SetupAttachment(BoxBodyComp, TEXT("KnifeSocket"));
 	CutterKnifeComp->SetRelativeLocation(FVector(-76.92,-15.63, 2.06));
@@ -102,6 +111,10 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	//BulCountUI->AddToViewport();
 
 	curBulletCount = maxBulletCount;
+	curHP = maxHP;
+
+	//SetImageAlphaForCurBullets();
+	//ResetFireCoolDown();
 	
 }
 
@@ -110,7 +123,8 @@ void AWhatTheBoxProjectCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	SetImageAlphaForCurBullets();
+	
+	SetImageAlphaForHP();
 }
 
 
@@ -212,9 +226,14 @@ void AWhatTheBoxProjectCharacter::Fire()
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
+		FVector KnifeForward = BoxBodyComp->GetSocketLocation(FName("FireSocket"));
+		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		
 		auto pastPos = CutterKnifeComp->GetRelativeTransform();
-		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);
+		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);		
+
+		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
+
 		ResetKnifeLocation();
 		
 
@@ -239,6 +258,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
 			curBulletCount--;
+			SetImageAlphaForCurBullets();
 			
 		}
 		// if Player Using Gun and have no ammo
@@ -246,6 +266,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		{
 			bCanFire = false;
 			ResetFireCoolDown();
+			//SetImageAlphaForCurBullets();
 		
 		}
 	}

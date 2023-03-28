@@ -24,6 +24,12 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bullet Setting")
 		class UProjectileMovementComponent* movementComp;
 
+		UFUNCTION()
+		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+		UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BoxSettings)
+			class UParticleSystem* explosionParticle;
+
 
 protected:
 	// Called when the game starts or when spawned
