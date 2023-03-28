@@ -46,7 +46,7 @@ public:
 		int32 GameTimeSec = 1;
 	// ½Ã°£ ºÐ
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		int32 GameTimeMin = 1;
+		int32 GameTimeMin = 5;
 
 
 

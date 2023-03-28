@@ -22,61 +22,35 @@ void AWhatTheBoxGameModeBase::BeginPlay()
 void AWhatTheBoxGameModeBase::GameStartCountDown()
 {
 	// 게임시간이 0초가 아니라면 1초 줄인다.
-	if (GameTimeSec > 0)
+	if (GameTimeSec > 0 || GameTimeMin > 0)
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("F!!!!!"));
-		if (Main_UI != nullptr)
-		{
-			Main_UI->PrintRemainingTime();
-		}
-		GameTimeSec--;
 		// 만약 0초가 되면 1분을 줄이고, 다시 59초로 초기화한다.
 		if (GameTimeSec == 0)
 		{
 			GameTimeMin--;
-			GameTimeSec = 60;
-			if (GameTimeMin == 5 && GameTimeSec == 60)
-			{
-				GameTimeMin = 4;
-				GameTimeSec = 59;
-			}
-			else if (GameTimeMin == 4 && GameTimeSec == 0)
-			{
-				GameTimeMin = 3;
-				GameTimeSec = 59;
-			}
-			else if (GameTimeMin == 3 && GameTimeSec == 0)
-			{
-				GameTimeMin = 2;
-				GameTimeSec = 59;
-			}
-			else if (GameTimeMin == 2 && GameTimeSec == 0)
-			{
-				GameTimeMin = 1;
-				GameTimeSec = 59;
-			}
-			else if (GameTimeMin == 1 && GameTimeSec == 0)
-			{
-				GameTimeMin = 0;
-				GameTimeSec = 59;
-			}
+			GameTimeSec = 59;
 		}
-	}
-	// 만약 0초가 되면 결과창을 띄운다.
-	else if (GameTimeSec == 1 && GameTimeMin == 0)
-	{
-		// 타이머를 종료
-		GetWorldTimerManager().ClearTimer(PlayTimeCount);
+		else
+		{
+			GameTimeSec--;
+		}
 		if (Main_UI != nullptr)
 		{
-		//	Main_UI->
+			Main_UI->PrintRemainingTime();
 		}
+	}
+	else
+	{
 		ShowResultUI();
 	}
 }
 
 void AWhatTheBoxGameModeBase::ShowResultUI()
 {
+	// 타이머를 종료시킨다.
+	GetWorld()->GetTimerManager().ClearTimer(PlayTimeCount);
+
 	// 마우스 커서를 보이게 한다.
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	// 플레이어를 멈춘다.

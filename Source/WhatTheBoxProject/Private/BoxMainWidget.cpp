@@ -20,12 +20,17 @@ void UBoxMainWidget::NativeConstruct()
 	
 }
 
+
 void UBoxMainWidget::PrintRemainingTime()
 {
 	// 남은 시간을 텍스트로 출력한다.
 	if (GM != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fire!!!!!"));
+		FNumberFormattingOptions opts;
+		opts.MinimumIntegralDigits = 2;
+		opts.MaximumIntegralDigits = 2;
+		FText remainingSeconds = FText::AsNumber(GM->GameTimeSec, &opts);
+		FString remainingTime = FString::Printf(TEXT("0:%s"), *remainingSeconds.ToString());
 		TXT_GameTimeSec->SetText(FText::FromString(FString::FromInt(GM->GameTimeSec)));
 		TXT_GameTimeMin->SetText(FText::FromString(FString::FromInt(GM->GameTimeMin)));
 	}
@@ -42,14 +47,14 @@ void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
 void UBoxMainWidget::PrintChatLog(FString Chat)
 {
 	// 채팅로그를 출력한다.
-	TXT_ChatLog->SetText(FText::FromString(Chat));
+//	TXT_ChatLog->SetText(FText::FromString(Chat));
 }
 
 void UBoxMainWidget::OnChatInputEnter()
 {
 	// 채팅 입력창에서 입력한 텍스트 가져오기
-	FString Chat = TXT_ChatInput->GetText().ToString();
+//	FString Chat = TXT_ChatInput->GetText().ToString();
 
 	// 채팅로그에 출력
-	PrintChatLog(Chat);
+//	PrintChatLog(Chat);
 }
