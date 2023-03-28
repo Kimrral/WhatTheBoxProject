@@ -5,6 +5,7 @@
 #include "Kismet/GameplayStatics.h"
 
 #include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 
 // Sets default values
@@ -44,7 +45,7 @@ void AKnifeDamageBox::Tick(float DeltaTime)
 void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AWhatTheBoxProjectCharacter* Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
+	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
 	
 	if (Character != nullptr)
 	{
@@ -52,9 +53,20 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		Character->curHP-=1;
 		if (Character->curHP <= 0)
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(1), true);
+			FTimerHandle destroyTimerHandle;
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
 			Character->BoxBodyComp->SetVisibility(false);
 			Character->DestroyedBoxBodyComp->SetVisibility(true);
+			
+
+			GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+			{
+				Character->Destroy();
+				
+			}), 1.5f, false);
+
+
+
 		}
 	}
 

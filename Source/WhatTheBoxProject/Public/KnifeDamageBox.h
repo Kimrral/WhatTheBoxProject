@@ -32,4 +32,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BoxSettings)
 	class UParticleSystem* explosionParticle;
 
+	class AWhatTheBoxProjectCharacter* Character;
+
 };

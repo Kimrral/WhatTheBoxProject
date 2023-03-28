@@ -10,6 +10,7 @@
 //#include "WhatTheBoxProjectCharacter.generated.h"
 #include <GameFramework/ProjectileMovementComponent.h>
 
+#include "Components/CapsuleComponent.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 
 // Sets default values
@@ -45,17 +46,25 @@ APlayerBullet::APlayerBullet()
 
 void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AWhatTheBoxProjectCharacter* Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
+	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
 
 	if(Character!=nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Attacked"))
 		Character->curHP--;
-		if(Character->curHP<=0)
+		if(Character->curHP<=0)			
 		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(1), true);
+			FTimerHandle destroyTimerHandle;
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
 			Character->BoxBodyComp->SetVisibility(false);
 			Character->DestroyedBoxBodyComp->SetVisibility(true);
+			
+
+			GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+				{
+					Character->Destroy();
+
+				}), 1.5f, false);
 		}
 	}
 	this->Destroy();
