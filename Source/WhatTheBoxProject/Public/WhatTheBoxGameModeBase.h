@@ -49,8 +49,8 @@ public:
 		int32 GameTimeMin = 5;
 
 	// 서버 업데이트 시간
-	UPROPERTY(Replicated)
-	float RemainingTime;
+// 	UPROPERTY(Replicated)
+// 	float RemainingTime;
 
 
 	//함수 부분
@@ -60,6 +60,7 @@ public:
 	
 	//게임 시간 끝나면 결과창 팝업
 	void ShowResultUI();
+
 
 	FTimerHandle TimerHandle;
 	FTimerHandle PlayTimeCount;

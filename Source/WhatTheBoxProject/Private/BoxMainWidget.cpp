@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
 #include "../WhatTheBoxProjectCharacter.h"
+#include "BoxGameMode.h"
 
 void UBoxMainWidget::NativeConstruct()
 {
@@ -58,3 +59,13 @@ void UBoxMainWidget::OnChatInputEnter()
 	// 채팅로그에 출력
 //	PrintChatLog(Chat);
 }
+
+//void UBoxMainWidget::UpdateKillLog(const TArray<FString>& KillLog)
+//{
+//	FString KillLogText;
+//	for (const FString& KillMessage : KillLog)
+//	{
+//		KillLogText += KillMessage + TEXT("\n");
+//	}
+//	TXT_KillLog->SetText(FText::FromString(KillLogText));
+//}

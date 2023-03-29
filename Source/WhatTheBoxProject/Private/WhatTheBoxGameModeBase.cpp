@@ -6,7 +6,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "BoxMainWidget.h"
 #include "TimerManager.h"
-#include "Net/UnrealNetwork.h"
 #include "Components/TextBlock.h"
 
 AWhatTheBoxGameModeBase::AWhatTheBoxGameModeBase()
@@ -61,8 +60,3 @@ void AWhatTheBoxGameModeBase::ShowResultUI()
 
 }
 
-void AWhatTheBoxGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(AWhatTheBoxGameModeBase, RemainingTime);
-}
