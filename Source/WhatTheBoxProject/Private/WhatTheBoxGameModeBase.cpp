@@ -5,6 +5,9 @@
 #include "../WhatTheBoxProjectCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "BoxMainWidget.h"
+#include "TimerManager.h"
+#include "Net/UnrealNetwork.h"
+#include "Components/TextBlock.h"
 
 AWhatTheBoxGameModeBase::AWhatTheBoxGameModeBase()
 {
@@ -24,7 +27,6 @@ void AWhatTheBoxGameModeBase::GameStartCountDown()
 	// 게임시간이 0초가 아니라면 1초 줄인다.
 	if (GameTimeSec > 0 || GameTimeMin > 0)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("F!!!!!"));
 		// 만약 0초가 되면 1분을 줄이고, 다시 59초로 초기화한다.
 		if (GameTimeSec == 0)
 		{
@@ -39,6 +41,7 @@ void AWhatTheBoxGameModeBase::GameStartCountDown()
 		{
 			Main_UI->PrintRemainingTime();
 		}
+
 	}
 	else
 	{
@@ -56,4 +59,10 @@ void AWhatTheBoxGameModeBase::ShowResultUI()
 	// 플레이어를 멈춘다.
 	PlayerController->SetCinematicMode(true, false, false, true, true);
 
+}
+
+void AWhatTheBoxGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AWhatTheBoxGameModeBase, RemainingTime);
 }

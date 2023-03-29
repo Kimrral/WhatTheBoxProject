@@ -48,7 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 GameTimeMin = 5;
 
-
+	// 서버 업데이트 시간
+	UPROPERTY(Replicated)
+	float RemainingTime;
 
 
 	//함수 부분

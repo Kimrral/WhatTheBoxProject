@@ -52,5 +52,4 @@ public:
 	// 채팅 입력창에 엔터키 누르면 이벤트 함수
 	UFUNCTION()
 		void OnChatInputEnter();
-
 };

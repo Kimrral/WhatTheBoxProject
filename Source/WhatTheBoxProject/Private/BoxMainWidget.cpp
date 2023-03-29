@@ -26,13 +26,13 @@ void UBoxMainWidget::PrintRemainingTime()
 	// 남은 시간을 텍스트로 출력한다.
 	if (GM != nullptr)
 	{
-		FNumberFormattingOptions opts;
-		opts.MinimumIntegralDigits = 2;
-		opts.MaximumIntegralDigits = 2;
-		FText remainingSeconds = FText::AsNumber(GM->GameTimeSec, &opts);
-		FString remainingTime = FString::Printf(TEXT("0:%s"), *remainingSeconds.ToString());
 		TXT_GameTimeSec->SetText(FText::FromString(FString::FromInt(GM->GameTimeSec)));
 		TXT_GameTimeMin->SetText(FText::FromString(FString::FromInt(GM->GameTimeMin)));
+		// 만약 GameTimeSec이 10보다 적으면 GameTimeSec 앞에 0을 붙여준다.
+		if (GM->GameTimeSec < 10)
+		{
+			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(GM->GameTimeSec)));
+		}
 	}
 	
 }
