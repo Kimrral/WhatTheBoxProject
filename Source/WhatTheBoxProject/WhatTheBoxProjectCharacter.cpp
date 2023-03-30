@@ -185,8 +185,31 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 	LatentInfo.CallbackTarget = this;
 	UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
 	BoxBodyComp->SetRelativeLocation(FVector(0, 0, -5));*/
+	//FTimerHandle boxHandle;
+	//GetWorld()->GetTimerManager().SetTimer(boxHandle, FTimerDelegate::CreateLambda([this]()->void
+	//{
+	//FTimerHandle boxHandle;
+	//GetWorld()->GetTimerManager().SetTimer(boxHandle, FTimerDelegate::CreateLambda([this]()->void
 	
-	
+	/*FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = this;
+	UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * 30.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.5, true, EMoveComponentAction::Type::Move, LatentInfo);
+	bIsBoxUp=true;
+	//	}), 1, true);
+
+	//FTimerHandle boxHandle1;
+	//GetWorld()->GetTimerManager().SetTimer(boxHandle1, FTimerDelegate::CreateLambda([this]()->void
+	//{
+			FLatentActionInfo LatentInfo1;
+			LatentInfo1.CallbackTarget = this;
+			UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -30.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.5, true, EMoveComponentAction::Type::Move, LatentInfo1);
+		bIsBoxUp=false;
+
+	//}), 0.5, false);
+
+		//}), 0.07f, true);*/
+
+
 }
 
 void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
@@ -196,6 +219,14 @@ void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
 	auto MovementY = MovementVector.Y;
 	MovementVector.X = 0;
 	MovementVector.Y = 0;*/
+	
+	if(bIsBoxUp)
+	{
+		FLatentActionInfo LatentInfo;
+		LatentInfo.CallbackTarget = this;
+		UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -30, BoxBodyComp->GetRelativeRotation(), false, false, 0.07f, true, EMoveComponentAction::Type::Move, LatentInfo);
+		bIsBoxUp = false;
+	}
 
 
 
@@ -235,7 +266,8 @@ void AWhatTheBoxProjectCharacter::Fire()
 		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
 
 		ResetKnifeLocation();
-		
+
+
 
 		
 		/*UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, pastPos.GetLocation(), FRotator(-51.73, 69.428, -67.26), false, false, 0.3f, true, EMoveComponentAction::Type::Move, LatentInfo);*/

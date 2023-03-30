@@ -75,6 +75,8 @@ public:
 		bool isUsingKnife = false;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool bIsBoxUp = false;
 	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		//bool bBoxCanMove = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -92,7 +94,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* fireEmitterTemplate;
 
-
+	//FTimerHandle boxHandle;
 protected:
 
 	/** Called for movement input */
