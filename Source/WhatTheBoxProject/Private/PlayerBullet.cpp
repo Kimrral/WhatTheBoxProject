@@ -52,6 +52,7 @@ void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Attacked"))
 		Character->curHP--;
+		Character->BoxHit();
 		if(Character->curHP<=0)			
 		{
 			FTimerHandle destroyTimerHandle;

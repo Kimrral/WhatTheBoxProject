@@ -50,7 +50,7 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	if (Character != nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Knife Attaked"))
-		Character->curHP-=1;
+		Character->curHP-=1;		
 		if (Character->curHP <= 0)
 		{
 			FTimerHandle destroyTimerHandle;
