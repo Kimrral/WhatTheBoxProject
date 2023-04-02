@@ -15,6 +15,8 @@ void UBoxMainWidget::NativeConstruct()
 
 	// 게임모드
 	GM = Cast<AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+
+
 	// 플레이어
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
