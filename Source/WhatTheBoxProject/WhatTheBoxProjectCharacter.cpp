@@ -179,6 +179,8 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 
+	BoxUp();
+	
 	
 	/*BoxBodyComp->SetRelativeLocation(FVector(0, 0, 5));
 	FLatentActionInfo LatentInfo;
@@ -220,13 +222,14 @@ void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
 	MovementVector.X = 0;
 	MovementVector.Y = 0;*/
 	
-	if(bIsBoxUp)
-	{
-		FLatentActionInfo LatentInfo;
+	//if (bIsBoxUp)
+	//{
+		/*FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
 		UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -30, BoxBodyComp->GetRelativeRotation(), false, false, 0.07f, true, EMoveComponentAction::Type::Move, LatentInfo);
-		bIsBoxUp = false;
-	}
+		bIsBoxUp = false;*/
+		//BoxDown();
+	//}
 
 
 
