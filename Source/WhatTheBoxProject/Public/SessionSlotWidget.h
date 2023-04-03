@@ -29,6 +29,11 @@ public:
 	class UTextBlock* text_GameMode;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	class UButton* btn_MemberCount;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+	class UTextBlock* text_MemberCount;
+
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* btn_GameTime;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* text_GameTime;
