@@ -34,19 +34,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Player")
 		class AWhatTheBoxProjectCharacter* Player;
 
-	// 게임 끝, 결과 위젯
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
-		TSubclassOf<class UUserWidget> ResultWidget;
-	UPROPERTY()
-	class UUserWidget* Result_UI;
-
-
 	// 시간 초
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 GameTimeSec = 1;
 	// 시간 분
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		int32 GameTimeMin = 5;
+
+	// 게임 끝, 결과 위젯
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+		TSubclassOf<class UUserWidget> ResultWidget;
+	UPROPERTY()
+	class UUserWidget* Result_UI;
 
 	// 서버 업데이트 시간
 // 	UPROPERTY(Replicated)
