@@ -24,7 +24,7 @@ public:
 	//전방 선언 부분
 public:
 	// 메인 위젯
-	UPROPERTY(BlueprintReadWrite, Category = "Widget")
+	UPROPERTY(BlueprintReadWrite, Category = "Widget" , Replicated)
 		class UBoxMainWidget* Main_UI;
 
 	UPROPERTY(EditAnywhere)
@@ -35,10 +35,10 @@ public:
 		class AWhatTheBoxProjectCharacter* Player;
 
 	// 시간 초
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		int32 GameTimeSec = 1;
 	// 시간 분
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 		int32 GameTimeMin = 5;
 
 	// 게임 끝, 결과 위젯
@@ -60,7 +60,16 @@ public:
 	//게임 시간 끝나면 결과창 팝업
 	void ShowResultUI();
 
+	UFUNCTION(Server, UnReliable, WithValidation)
+	void Server_GameStartCountDown();
 
+	UFUNCTION(NetMulticast, UnReliable)
+	void Multicast_UpdateTimerUI();
+
+	// GetLifetimeReplicatedprops
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(Replicated)
 	FTimerHandle TimerHandle;
 	FTimerHandle PlayTimeCount;
 };

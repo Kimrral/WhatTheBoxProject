@@ -22,14 +22,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_GameTimeMin;
 
-// 	// 채팅 입력창
-// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-// 	class UEditableTextBox* TXT_ChatInput;
-// 
-// 	// 채팅로그
-// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-// 	class UTextBlock* TXT_ChatLog;
-
 	// 킬 로그
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_KillLog;
@@ -55,3 +47,11 @@ public:
 	//UFUNCTION()
 	//void	UpdateKillLog(const TArray<FString>& KillLog)
 };
+
+// 	// 채팅 입력창
+// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+// 	class UEditableTextBox* TXT_ChatInput;
+// 
+// 	// 채팅로그
+// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+// 	class UTextBlock* TXT_ChatLog;
