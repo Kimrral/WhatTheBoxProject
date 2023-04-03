@@ -8,6 +8,7 @@
 #include "TimerManager.h"
 #include "Components/TextBlock.h"
 #include "Net/UnrealNetwork.h"
+#include "DrawDebugHelpers.h"
 
 AWhatTheBoxGameModeBase::AWhatTheBoxGameModeBase()
 {
@@ -71,6 +72,9 @@ bool AWhatTheBoxGameModeBase::Server_GameStartCountDown_Validate()
 
 void AWhatTheBoxGameModeBase::Multicast_UpdateTimerUI_Implementation()
 {
+	// 로그출력
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString("ticktock!"), true, FVector2D(1.2f));
+	UE_LOG(LogTemp, Warning, TEXT("qwer"));
 	if (Main_UI != nullptr)
 	{
 		Main_UI->PrintRemainingTime();
