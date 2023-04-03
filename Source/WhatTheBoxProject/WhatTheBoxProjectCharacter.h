@@ -60,6 +60,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UUserWidget* HPUI;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundBase* fireSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundBase* knifeSound;
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> crosshairFactory;
 		UPROPERTY(EditAnywhere)
@@ -94,7 +99,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* fireEmitterTemplate;
 
-	//FTimerHandle boxHandle;
+	
 protected:
 
 	/** Called for movement input */

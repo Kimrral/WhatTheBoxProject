@@ -105,16 +105,12 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	CutterKnifeComp->SetVisibility(false);
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
-	//HPUI = CreateWidget<UUserWidget>(GetWorld(), HPUIFactory);
-	//HPUI->AddToViewport();
-	//BulCountUI = CreateWidget<UUserWidget>(GetWorld(), BulCountUIFactory);
-	//BulCountUI->AddToViewport();
+
 
 	curBulletCount = maxBulletCount;
 	curHP = maxHP;
 
-	//SetImageAlphaForCurBullets();
-	//ResetFireCoolDown();
+
 	
 }
 
@@ -181,58 +177,29 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 
 	BoxUp();
 	
-	
-	/*BoxBodyComp->SetRelativeLocation(FVector(0, 0, 5));
-	FLatentActionInfo LatentInfo;
-	LatentInfo.CallbackTarget = this;
-	UKismetSystemLibrary::Delay(GetWorld(), 0.2f, LatentInfo);
-	BoxBodyComp->SetRelativeLocation(FVector(0, 0, -5));*/
-	//FTimerHandle boxHandle;
-	//GetWorld()->GetTimerManager().SetTimer(boxHandle, FTimerDelegate::CreateLambda([this]()->void
-	//{
-	//FTimerHandle boxHandle;
-	//GetWorld()->GetTimerManager().SetTimer(boxHandle, FTimerDelegate::CreateLambda([this]()->void
-	
-	/*FLatentActionInfo LatentInfo;
-	LatentInfo.CallbackTarget = this;
-	UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * 30.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.5, true, EMoveComponentAction::Type::Move, LatentInfo);
-	bIsBoxUp=true;
-	//	}), 1, true);
-
-	//FTimerHandle boxHandle1;
-	//GetWorld()->GetTimerManager().SetTimer(boxHandle1, FTimerDelegate::CreateLambda([this]()->void
-	//{
-			FLatentActionInfo LatentInfo1;
-			LatentInfo1.CallbackTarget = this;
-			UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -30.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.5, true, EMoveComponentAction::Type::Move, LatentInfo1);
-		bIsBoxUp=false;
-
-	//}), 0.5, false);
-
-		//}), 0.07f, true);*/
+	/*if(bIsBoxUp==false)
+	{
+		bIsBoxUp=true;
+		FLatentActionInfo LatentInfo;
+		LatentInfo.CallbackTarget = this;
+		UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * 15.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.12f, false, EMoveComponentAction::Type::Move, LatentInfo);
+		FTimerHandle boxHandle;
+		GetWorldTimerManager().SetTimer(boxHandle, FTimerDelegate::CreateLambda([this]()->void
+		{
+				
+				FLatentActionInfo LatentInfo1;
+				LatentInfo1.CallbackTarget = this;
+				UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -15.0f, BoxBodyComp->GetRelativeRotation(), false, false, 0.12f, false, EMoveComponentAction::Type::Move, LatentInfo1);
+				bIsBoxUp = false;
+			
+		}), 0.12f, false);
+	}	*/
 
 
 }
 
 void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
 {
-	/*FVector2D MovementVector = Value.Get<FVector2D>();
-	auto MovementX = MovementVector.X;
-	auto MovementY = MovementVector.Y;
-	MovementVector.X = 0;
-	MovementVector.Y = 0;*/
-	
-	//if (bIsBoxUp)
-	//{
-		/*FLatentActionInfo LatentInfo;
-		LatentInfo.CallbackTarget = this;
-		UKismetSystemLibrary::MoveComponentTo(BoxBodyComp, BoxBodyComp->GetRelativeLocation() + BoxBodyComp->GetUpVector() * -30, BoxBodyComp->GetRelativeRotation(), false, false, 0.07f, true, EMoveComponentAction::Type::Move, LatentInfo);
-		bIsBoxUp = false;*/
-		//BoxDown();
-	//}
-
-
-
 }
 
 void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
@@ -261,9 +228,9 @@ void AWhatTheBoxProjectCharacter::Fire()
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
 		FVector KnifeForward = BoxBodyComp->GetSocketLocation(FName("FireSocket"));
-		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		
+		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;		
 		auto pastPos = CutterKnifeComp->GetRelativeTransform();
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), knifeSound, KnifeForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
 		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);		
 
 		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
@@ -290,6 +257,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
 			//FVector EmitterForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
 			curBulletCount--;
