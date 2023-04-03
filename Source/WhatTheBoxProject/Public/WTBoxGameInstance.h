@@ -28,7 +28,7 @@ public:
 		int32 maxSearchCount = 20;
 
 public:
-	void CreatewtboxSession(FString roomName, int32 playerCount);
+	void CreatewtboxSession(FString roomName);
 
 	UFUNCTION()
 	void OnCreateSessionComplete(FName sessionName, bool bIsSuccess);
@@ -36,6 +36,10 @@ public:
 	void FindwtbSessions();
 	
 	void OnFindSessionComplete(bool bWasSuccessful);
+
+	void CreateMySessionServer(bool bIsSuccess);
+
+	void CreateMySessionComplete();
 
 	
 };

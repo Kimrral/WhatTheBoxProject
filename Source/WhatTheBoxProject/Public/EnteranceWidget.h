@@ -28,12 +28,20 @@ public:
 		class UWidgetSwitcher* widgetSwitcher;
 
 		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
+			class UScrollBox* sbox_RoomList;
+
+		UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 		class UButton* btn_KoreaServer;
+
+		UPROPERTY(EditAnywhere)
+	TSubclassOf<class USessionSlotWidget> searchListSlot;
+
 
 private:
 	UFUNCTION()
 	void ClickPlay();
 
-
+	UFUNCTION()
+		void AddRoomSlot(FString roomName, int32 gamePlayTime, int32 currentPlayers, int32 maxPlayers, int32 ping);
 	
 };

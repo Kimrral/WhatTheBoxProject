@@ -13,6 +13,7 @@ void USessionSlotWidget::NativeConstruct()
 	text_RoomName->SetText(FText::FromString(""));
 	text_GameMode->SetText(FText::FromString(""));
 	text_GameTime->SetText(FText::FromString(""));
+	text_MemberCount->SetText(FText::FromString(""));
 	text_Description->SetText(FText::FromString(""));
 
 	btn_JoinRoom->OnClicked.AddDynamic(this, &USessionSlotWidget::ClickJoinRoom);
