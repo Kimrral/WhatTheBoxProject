@@ -22,14 +22,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_GameTimeMin;
 
-// 	// 채팅 입력창
-// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-// 	class UEditableTextBox* TXT_ChatInput;
-// 
-// 	// 채팅로그
-// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-// 	class UTextBlock* TXT_ChatLog;
-
 	// 킬 로그
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_KillLog;
@@ -52,5 +44,17 @@ public:
 	// 채팅 입력창에 엔터키 누르면 이벤트 함수
 	UFUNCTION()
 		void OnChatInputEnter();
+	// GetLifetimeReplicatedprops
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	//UFUNCTION()
+	//void	UpdateKillLog(const TArray<FString>& KillLog)
 };
+
+// 	// 채팅 입력창
+// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+// 	class UEditableTextBox* TXT_ChatInput;
+// 
+// 	// 채팅로그
+// 	UPROPERTY(EditAnywhere, meta = (BindWidget))
+// 	class UTextBlock* TXT_ChatLog;

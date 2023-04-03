@@ -7,6 +7,8 @@
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
 #include "../WhatTheBoxProjectCharacter.h"
+#include "BoxGameMode.h"
+#include "Net/UnrealNetwork.h"
 
 void UBoxMainWidget::NativeConstruct()
 {
@@ -14,6 +16,8 @@ void UBoxMainWidget::NativeConstruct()
 
 	// 게임모드
 	GM = Cast<AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+
+
 	// 플레이어
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
@@ -26,13 +30,14 @@ void UBoxMainWidget::PrintRemainingTime()
 	// 남은 시간을 텍스트로 출력한다.
 	if (GM != nullptr)
 	{
-		FNumberFormattingOptions opts;
-		opts.MinimumIntegralDigits = 2;
-		opts.MaximumIntegralDigits = 2;
-		FText remainingSeconds = FText::AsNumber(GM->GameTimeSec, &opts);
-		FString remainingTime = FString::Printf(TEXT("0:%s"), *remainingSeconds.ToString());
+		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, FString("oiio"), true, FVector2D(1.2f));
 		TXT_GameTimeSec->SetText(FText::FromString(FString::FromInt(GM->GameTimeSec)));
 		TXT_GameTimeMin->SetText(FText::FromString(FString::FromInt(GM->GameTimeMin)));
+		// 만약 GameTimeSec이 10보다 적으면 GameTimeSec 앞에 0을 붙여준다.
+		if (GM->GameTimeSec < 10)
+		{
+			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(GM->GameTimeSec)));
+		}
 	}
 	
 }
@@ -58,3 +63,21 @@ void UBoxMainWidget::OnChatInputEnter()
 	// 채팅로그에 출력
 //	PrintChatLog(Chat);
 }
+
+void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	// Replicate GM variable
+	DOREPLIFETIME(UBoxMainWidget, GM);
+}
+
+//void UBoxMainWidget::UpdateKillLog(const TArray<FString>& KillLog)
+//{
+//	FString KillLogText;
+//	for (const FString& KillMessage : KillLog)
+//	{
+//		KillLogText += KillMessage + TEXT("\n");
+//	}
+//	TXT_KillLog->SetText(FText::FromString(KillLogText));
+//}

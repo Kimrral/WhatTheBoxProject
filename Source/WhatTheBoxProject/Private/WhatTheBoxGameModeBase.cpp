@@ -5,6 +5,10 @@
 #include "../WhatTheBoxProjectCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "BoxMainWidget.h"
+#include "TimerManager.h"
+#include "Components/TextBlock.h"
+#include "Net/UnrealNetwork.h"
+#include "DrawDebugHelpers.h"
 
 AWhatTheBoxGameModeBase::AWhatTheBoxGameModeBase()
 {
@@ -21,28 +25,23 @@ void AWhatTheBoxGameModeBase::BeginPlay()
 
 void AWhatTheBoxGameModeBase::GameStartCountDown()
 {
-	// 게임시간이 0초가 아니라면 1초 줄인다.
-	if (GameTimeSec > 0 || GameTimeMin > 0)
+	if (GetLocalRole() == ROLE_Authority)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("F!!!!!"));
-		// 만약 0초가 되면 1분을 줄이고, 다시 59초로 초기화한다.
-		if (GameTimeSec == 0)
+		// 게임시간이 0초가 아니라면 1초 줄인다.
+		if (GameTimeSec > 0 || GameTimeMin > 0)
 		{
-			GameTimeMin--;
-			GameTimeSec = 59;
+			// 만약 0초가 되면 1분을 줄이고, 다시 59초로 초기화한다.
+			if (GameTimeSec == 0)
+			{
+				GameTimeMin--;
+				GameTimeSec = 59;
+			}
+			else
+			{
+				GameTimeSec--;
+			}
+			Multicast_UpdateTimerUI();
 		}
-		else
-		{
-			GameTimeSec--;
-		}
-		if (Main_UI != nullptr)
-		{
-			Main_UI->PrintRemainingTime();
-		}
-	}
-	else
-	{
-		ShowResultUI();
 	}
 }
 
@@ -57,3 +56,37 @@ void AWhatTheBoxGameModeBase::ShowResultUI()
 	PlayerController->SetCinematicMode(true, false, false, true, true);
 
 }
+
+void AWhatTheBoxGameModeBase::Server_GameStartCountDown_Implementation()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		GetWorldTimerManager().SetTimer(TimerHandle, this, &AWhatTheBoxGameModeBase::GameStartCountDown, 1.0f, true);
+	}
+}
+
+bool AWhatTheBoxGameModeBase::Server_GameStartCountDown_Validate()
+{
+	return true;
+}
+
+void AWhatTheBoxGameModeBase::Multicast_UpdateTimerUI_Implementation()
+{
+	// 로그출력
+	GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Red, FString("ticktock!"), true, FVector2D(1.2f));
+	UE_LOG(LogTemp, Warning, TEXT("qwer"));
+	if (Main_UI != nullptr)
+	{
+		Main_UI->PrintRemainingTime();
+	}
+}
+
+void AWhatTheBoxGameModeBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWhatTheBoxGameModeBase, GameTimeSec);
+	DOREPLIFETIME(AWhatTheBoxGameModeBase, GameTimeMin);
+	DOREPLIFETIME(AWhatTheBoxGameModeBase, Main_UI);
+}
+
