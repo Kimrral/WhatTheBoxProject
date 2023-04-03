@@ -236,12 +236,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
 
 		ResetKnifeLocation();
-
-
-
-		
-		/*UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, pastPos.GetLocation(), FRotator(-51.73, 69.428, -67.26), false, false, 0.3f, true, EMoveComponentAction::Type::Move, LatentInfo);*/
-		
+				
 		bCanFire=false;
 		ResetKnifeCoolDown();
 
@@ -255,7 +250,6 @@ void AWhatTheBoxProjectCharacter::Fire()
 		{
 			
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
-			//FVector EmitterForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 300.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
@@ -268,8 +262,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		else
 		{
 			bCanFire = false;
-			ResetFireCoolDown();
-			//SetImageAlphaForCurBullets();
+			ResetFireCoolDown();		
 		
 		}
 	}
