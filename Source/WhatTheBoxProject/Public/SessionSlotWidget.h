@@ -46,6 +46,10 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* btn_JoinRoom;
 
+	class UWTBoxGameInstance* gameInstance;
+
+	UPROPERTY(meta = (BindWidget))
+	int32 index;
 private:
 	UFUNCTION()
 	void ClickJoinRoom();
