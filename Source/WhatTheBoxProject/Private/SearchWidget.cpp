@@ -29,9 +29,8 @@ void USearchWidget::QuickPlay()
 
 //방 이름 적고 이 버튼을 누르면 만든 방으로 들어간다
 void USearchWidget::CreateRoom()
-{
-	//int32 playerCounts = FMath::RoundHalfFromZero(GetValue());
-	gameInstance->CreatewtboxSession(editText_RoomName->GetText().ToString());
+{	
+	enteranceWidget->widgetSwitcher->SetActiveWidgetIndex(2);
 }
 
 void USearchWidget::BackToMenu()
