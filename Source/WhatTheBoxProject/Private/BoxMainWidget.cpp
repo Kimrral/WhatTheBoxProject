@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
+#include "Components/VerticalBox.h"
 #include "../WhatTheBoxProjectCharacter.h"
 #include "BoxGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -25,6 +26,19 @@ void UBoxMainWidget::NativeConstruct()
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 
+void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), GetWorld()->GetAuthGameMode() != nullptr ? *FString("HAS") : *FString("None"));
+
+	// 	AWhatTheBoxGameModeBase* gm = Cast< AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	if (inGameTimer != nullptr && this != nullptr)
+	{
+		inGameTimer->Server_UpdateTimerUI();
+	}
+}
 
 void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 {
@@ -65,20 +79,6 @@ void UBoxMainWidget::PrintChatLog(FString Chat)
 void UBoxMainWidget::OnChatInputEnter()
 {
 
-}
-
-void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
-{
-	Super::NativeTick(MyGeometry, InDeltaTime);
-
-	UE_LOG(LogTemp, Warning, TEXT("%s"), GetWorld()->GetAuthGameMode() != nullptr ? *FString("HAS") : *FString("None"));
-
-// 	AWhatTheBoxGameModeBase* gm = Cast< AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
-
-	if (inGameTimer != nullptr && this != nullptr)
-	{
-		inGameTimer->Server_UpdateTimerUI();
-	}
 }
 
 void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

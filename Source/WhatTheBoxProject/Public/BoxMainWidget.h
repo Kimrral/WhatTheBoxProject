@@ -6,9 +6,19 @@
 #include "Blueprint/UserWidget.h"
 #include "BoxMainWidget.generated.h"
 
-/**
- * 
- */
+
+// 플레이어 정보 구조체 공간
+// USTRUCT(BlueprintType)
+// struct FPlayerInfo
+// {
+// 	GENERATED_BODY()
+// 
+// 	UPROPERTY(BlueprintReadOnly)
+// 	FString name;
+// 	UPROPERTY(BlueprintReadOnly)
+// 	float score;
+// };
+
 UCLASS()
 class WHATTHEBOXPROJECT_API UBoxMainWidget : public UUserWidget
 {
@@ -21,12 +31,12 @@ public:
 	// 남은 시간 분 텍스트
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_GameTimeMin;
-
 	// 킬 로그
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* TXT_KillLog;
 
 	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	public:
 		// 게임모드
 		UPROPERTY(BlueprintReadWrite, Category = "GameMode")
@@ -39,7 +49,28 @@ public:
 		// 플레이어
 		UPROPERTY()
 		class AWhatTheBoxProjectCharacter* Player;
+	//--------------------순위ui부분--------------------//
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UVerticalBox* Vertical_Rank;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankID1;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankID2;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankID3;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankID4;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankScore1;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankScore2;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankScore3;
+	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
+	class UTextBlock* TXT_RankScore4;
 
+	//--------------------순위ui부분--------------------//
+// 함수 부분
 	// 남은 시간 텍스트출력
 	void PrintRemainingTime(int32 min, int32 sec);
 	// 플레이어 죽을 시, 킬로그 출력
@@ -50,7 +81,6 @@ public:
 	UFUNCTION()
 	void OnChatInputEnter();
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
