@@ -47,7 +47,8 @@ APlayerBullet::APlayerBullet()
 void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
-
+	if(HasAuthority())
+	{
 	if(Character!=nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bullet Attacked"))
@@ -71,6 +72,7 @@ void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 		}
 	}
 	this->Destroy();
+	}
 	
 }
 
