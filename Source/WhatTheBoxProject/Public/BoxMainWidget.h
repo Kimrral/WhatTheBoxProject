@@ -31,22 +31,29 @@ public:
 		// 게임모드
 		UPROPERTY(BlueprintReadWrite, Category = "GameMode")
 			class AWhatTheBoxGameModeBase* GM;
+
+		// 타이머액터
+		UPROPERTY(BlueprintReadWrite, Category = "Timer")
+			class ATimerActor* inGameTimer;
+
 		// 플레이어
 		UPROPERTY()
 		class AWhatTheBoxProjectCharacter* Player;
 
 	// 남은 시간 텍스트출력
-	void PrintRemainingTime();
+	void PrintRemainingTime(int32 min, int32 sec);
 	// 플레이어 죽을 시, 킬로그 출력
 	void PrintKillLog(FString Killer, FString Victim);
 	// 채팅 인풋에 채팅치면 채팅로그에 출력
 	void PrintChatLog(FString Chat);
 	// 채팅 입력창에 엔터키 누르면 이벤트 함수
 	UFUNCTION()
-		void OnChatInputEnter();
-	// GetLifetimeReplicatedprops
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	void OnChatInputEnter();
 
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	//UFUNCTION()
 	//void	UpdateKillLog(const TArray<FString>& KillLog)
 };

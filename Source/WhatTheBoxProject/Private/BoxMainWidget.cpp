@@ -9,6 +9,7 @@
 #include "../WhatTheBoxProjectCharacter.h"
 #include "BoxGameMode.h"
 #include "Net/UnrealNetwork.h"
+#include "TimerActor.h"
 
 void UBoxMainWidget::NativeConstruct()
 {
@@ -17,29 +18,36 @@ void UBoxMainWidget::NativeConstruct()
 	// 게임모드
 	GM = Cast<AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
 
+	// 게임타이머액터
+	inGameTimer = Cast<ATimerActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerActor::StaticClass()));
 
 	// 플레이어
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
-
-	
 }
 
 
-void UBoxMainWidget::PrintRemainingTime()
+void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 {
 	// 남은 시간을 텍스트로 출력한다.
-	if (GM != nullptr)
+
+	TXT_GameTimeMin->SetText(FText::AsNumber(min));
+	TXT_GameTimeSec->SetText(FText::AsNumber(sec));
+
+	if (sec < 10)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 3, FColor::Green, FString("oiio"), true, FVector2D(1.2f));
-		TXT_GameTimeSec->SetText(FText::FromString(FString::FromInt(GM->GameTimeSec)));
-		TXT_GameTimeMin->SetText(FText::FromString(FString::FromInt(GM->GameTimeMin)));
-		// 만약 GameTimeSec이 10보다 적으면 GameTimeSec 앞에 0을 붙여준다.
-		if (GM->GameTimeSec < 10)
-		{
-			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(GM->GameTimeSec)));
-		}
+		TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(sec)));
 	}
-	
+
+// 	if (inGameTimer != nullptr)
+// 	{
+// 		
+// 		// 만약 GameTimeSec이 10보다 적으면 GameTimeSec 앞에 0을 붙여준다.
+// 		if (inGameTimer->GameTimeSec < 10)
+// 		{
+// 			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(inGameTimer->GameTimeSec)));
+// 		}
+// 	}
+
 }
 
 void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
@@ -51,17 +59,26 @@ void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
 // 채팅인풋에 입력시 채팅로그에 출력
 void UBoxMainWidget::PrintChatLog(FString Chat)
 {
-	// 채팅로그를 출력한다.
-//	TXT_ChatLog->SetText(FText::FromString(Chat));
+
 }
 
 void UBoxMainWidget::OnChatInputEnter()
 {
-	// 채팅 입력창에서 입력한 텍스트 가져오기
-//	FString Chat = TXT_ChatInput->GetText().ToString();
 
-	// 채팅로그에 출력
-//	PrintChatLog(Chat);
+}
+
+void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	UE_LOG(LogTemp, Warning, TEXT("%s"), GetWorld()->GetAuthGameMode() != nullptr ? *FString("HAS") : *FString("None"));
+
+// 	AWhatTheBoxGameModeBase* gm = Cast< AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+
+	if (inGameTimer != nullptr && this != nullptr)
+	{
+		inGameTimer->Server_UpdateTimerUI();
+	}
 }
 
 void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -69,7 +86,7 @@ void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// Replicate GM variable
-	DOREPLIFETIME(UBoxMainWidget, GM);
+	DOREPLIFETIME(UBoxMainWidget,inGameTimer);
 }
 
 //void UBoxMainWidget::UpdateKillLog(const TArray<FString>& KillLog)

@@ -21,4 +21,8 @@ protected:
 public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UBoxMainWidget> mainWidget;
+
+	// Gamemodebase 
+	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
+	class AWhatTheBoxGameModeBase* GM;
 };

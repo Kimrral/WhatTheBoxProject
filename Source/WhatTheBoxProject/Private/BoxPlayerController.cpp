@@ -3,6 +3,8 @@
 
 #include "BoxPlayerController.h"
 #include "BoxMainWidget.h"
+#include "WhatTheBoxGameModeBase.h"
+
 
 void ABoxPlayerController::BeginPlay()
 {
@@ -12,9 +14,10 @@ void ABoxPlayerController::BeginPlay()
 	{
 		UBoxMainWidget* MainUI = CreateWidget<UBoxMainWidget>(this, mainWidget);
 
-		if (MainUI)
+		if (MainUI != nullptr)
 		{
 			MainUI->AddToViewport();
 		}
 	}
+
 }
