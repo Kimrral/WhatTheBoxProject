@@ -34,4 +34,7 @@ public:
 
 	class AWhatTheBoxProjectCharacter* Character;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundBase* explosionSound;
+
 };

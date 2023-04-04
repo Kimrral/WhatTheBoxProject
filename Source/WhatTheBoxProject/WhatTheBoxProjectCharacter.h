@@ -61,9 +61,13 @@ public:
 		class UUserWidget* HPUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USoundBase* fireSound;
+	class USoundBase* fireSound;	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USoundBase* knifeSound;
+		class USoundBase* knifeOnSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundBase* reloadSound;
+
+
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> crosshairFactory;

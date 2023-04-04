@@ -32,6 +32,9 @@ public:
 
 		class AWhatTheBoxProjectCharacter* Character;
 
+		UPROPERTY(EditAnywhere, BlueprintReadWrite)
+			class USoundBase* explosionSound;
+
 
 protected:
 	// Called when the game starts or when spawned

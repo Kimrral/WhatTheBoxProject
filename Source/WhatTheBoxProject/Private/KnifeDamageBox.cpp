@@ -55,6 +55,7 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 		{
 			FTimerHandle destroyTimerHandle;
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, Character->BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 			Character->BoxBodyComp->SetVisibility(false);
 			Character->DestroyedBoxBodyComp->SetVisibility(true);
 			

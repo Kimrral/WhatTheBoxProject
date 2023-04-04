@@ -224,13 +224,13 @@ void AWhatTheBoxProjectCharacter::Fire()
 	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), knifeOnSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
 		FVector KnifeForward = BoxBodyComp->GetSocketLocation(FName("FireSocket"));
 		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;		
-		auto pastPos = CutterKnifeComp->GetRelativeTransform();
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), knifeSound, KnifeForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
+		auto pastPos = CutterKnifeComp->GetRelativeTransform();		
 		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);		
 
 		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
@@ -261,6 +261,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		// if Player Using Gun and have no ammo
 		else
 		{
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 			bCanFire = false;
 			ResetFireCoolDown();		
 		
@@ -272,7 +273,8 @@ void AWhatTheBoxProjectCharacter::ChangeWeapon()
 {
 	if (isUsingKnife == false)
 	{
-		CutterKnifeComp->SetVisibility(true);
+
+		CutterKnifeComp->SetVisibility(true);		
 		isUsingKnife = true;
 		GetCharacterMovement()->MaxWalkSpeed = 650.0f;
 	}
