@@ -117,11 +117,6 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastFire();
 
-	UFUNCTION(Server, Unreliable)
-	void ServerFire();
-
-	UFUNCTION(NetMulticast, Unreliable)
-		void MulticastFire();
 
 	void ChangeWeapon();
 
