@@ -48,6 +48,8 @@ void AKnifeDamageBox::Tick(float DeltaTime)
 void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	if(HasAuthority())
+	{
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
 	
 	if (Character != nullptr)
@@ -70,8 +72,8 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 				}), 1.5f, false);
 			}
 		}
+	 }
 	}
-
 }
 
 void AKnifeDamageBox::ChangeBoxMesh()
