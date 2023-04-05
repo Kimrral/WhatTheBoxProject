@@ -60,6 +60,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UUserWidget* HPUI;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundBase* fireSound;	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundBase* knifeOnSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundBase* reloadSound;
+
+
+
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> crosshairFactory;
 		UPROPERTY(EditAnywhere)
@@ -94,7 +103,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UParticleSystem* fireEmitterTemplate;
 
-	//FTimerHandle boxHandle;
+	
 protected:
 
 	/** Called for movement input */
@@ -105,6 +114,12 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void Fire();
+
+	UFUNCTION(Server, Unreliable)
+	void ServerFire();
+
+	UFUNCTION(NetMulticast, Unreliable)
+		void MulticastFire();
 
 	void ChangeWeapon();
 

@@ -14,34 +14,6 @@ class WHATTHEBOXPROJECT_API USearchWidget : public UUserWidget
 {
 	GENERATED_BODY()
 
-protected:
 
-	virtual void NativeConstruct() override;
-
-public:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UEditableText* editText_RoomName;
-
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* btn_QuickPlay;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* btn_CreateRoom;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* btn_BackToMenu;
-
-	class UEnteranceWidget* enteranceWidget;
-	class UWTBoxGameInstance* gameInstance;
-
-
-private:
-
-	UFUNCTION()
-	void QuickPlay();
-
-	UFUNCTION()
-	void CreateRoom();
-
-	UFUNCTION()
-	void BackToMenu();
 
 };

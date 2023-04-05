@@ -15,6 +15,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ABoxPlayer::ABoxPlayer()
@@ -69,6 +70,9 @@ ABoxPlayer::ABoxPlayer()
 	CutterKnifeComp->SetRelativeRotation(FRotator(-51.73, 69.428, -67.26));
 	FVector KnifeScale = FVector(0.08f, 0.1f, 0.05f);
 	CutterKnifeComp->SetRelativeScale3D(KnifeScale);
+
+	SetReplicateMovement(true);
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned
@@ -111,5 +115,11 @@ void ABoxPlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 
+}
+
+void ABoxPlayer::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABoxPlayer, CutterKnifeComp);
 }
 

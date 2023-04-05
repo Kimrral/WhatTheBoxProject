@@ -7,7 +7,7 @@
 
 UWTBoxGameInstance::UWTBoxGameInstance()
 {
-	
+	sessionID = "What The Box";
 }
 
 void UWTBoxGameInstance::Init()
@@ -22,12 +22,13 @@ void UWTBoxGameInstance::Init()
 		{
 			wtbSessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UWTBoxGameInstance::OnCreateSessionComplete);
 			wtbSessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UWTBoxGameInstance::OnFindSessionComplete);
+			wtbSessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UWTBoxGameInstance::OnJoinSessionComplete);
 		}
 		
 	}
 }
 
-void UWTBoxGameInstance::CreatewtboxSession(FString roomName)
+void UWTBoxGameInstance::CreatewtboxSession(FString roomName, int32 playerCount)
 {
 	if(wtbSessionInterface != nullptr)
 	{
@@ -37,11 +38,14 @@ void UWTBoxGameInstance::CreatewtboxSession(FString roomName)
 		sessionsettings.bAllowJoinViaPresence = false;
 		sessionsettings.bIsDedicated = false;
 		sessionsettings.bIsLANMatch = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
-		//sessionsettings.NumPublicConnections = playerCount;
+		sessionsettings.NumPublicConnections = playerCount;
 		sessionsettings.Set(FName("Key_RoomName"), roomName);
 		sessionsettings.bShouldAdvertise = true;
 		wtbSessionInterface->CreateSession(0, sessionID, sessionsettings);
 		sessionsettings.Set(FName("KEY_RoomName"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+		sessionsettings.bShouldAdvertise = true;
+
+		wtbSessionInterface->CreateSession(0, sessionID, sessionsettings);
 	}
 }
 
@@ -55,6 +59,27 @@ void UWTBoxGameInstance::OnCreateSessionComplete(FName sessionName, bool bIsSucc
 	}
 }
 
+void UWTBoxGameInstance::OnFindSessionComplete(bool bWasSuccessful)
+{
+	if (bWasSuccessful)
+	{
+		TArray<FOnlineSessionSearchResult> searchResults = sessionSearch->SearchResults;
+
+		for (int32 i = 0; i < searchResults.Num(); i++)
+		{
+			FSessionInfo searchSessionInfo;
+			FString roomName;
+			searchResults[i].Session.SessionSettings.Get(FName("KEY_RoomName"), roomName);
+			searchSessionInfo.maxPlayers = searchResults[i].Session.SessionSettings.NumPublicConnections;
+			searchSessionInfo.currentPlayers = searchSessionInfo.maxPlayers - searchResults[i].Session.NumOpenPublicConnections;
+			searchSessionInfo.ping = searchResults[i].PingInMs;
+			searchSessionInfo.index = i;
+
+			searchResultDele.Broadcast(searchSessionInfo);
+		}
+	}
+}
+
 void UWTBoxGameInstance::FindwtbSessions()
 {
 	sessionSearch = MakeShareable(new FOnlineSessionSearch());
@@ -64,23 +89,20 @@ void UWTBoxGameInstance::FindwtbSessions()
 	wtbSessionInterface->FindSessions(0, sessionSearch.ToSharedRef());
 }
 
-void UWTBoxGameInstance::OnFindSessionComplete(bool bWasSuccessful)
+void UWTBoxGameInstance::JoinwtbSessions(int32 sessionIndex)
 {
-	if(bWasSuccessful)
+	FOnlineSessionSearchResult selectedSession = sessionSearch->SearchResults[sessionIndex];
+	wtbSessionInterface->JoinSession(0, sessionID, selectedSession);
+}
+
+void UWTBoxGameInstance::OnJoinSessionComplete(FName sessionName, EOnJoinSessionCompleteResult::Type joinResult)
+{
+	FString joinAddress;
+	wtbSessionInterface->GetResolvedConnectString(sessionName, joinAddress);
+
+	if (APlayerController* pc = GetWorld()->GetFirstPlayerController())
 	{
-		TArray<FOnlineSessionSearchResult> searchResults = sessionSearch->SearchResults;
-
-		for(int32 i = 0; i < searchResults.Num(); i++)
-		{
-			FString roomName;
-			searchResults[i].Session.SessionSettings.Get(FName("KEY_RoomName"), roomName);
-			int32 maxPlayer = searchResults[i].Session.SessionSettings.NumPublicConnections;
-			int32 currentPlayers = maxPlayer - searchResults[i].Session.NumOpenPublicConnections;
-			int32 ping = searchResults[i].PingInMs;
-			//searchResults.index = i;
-			
-
-		}
+		pc->ClientTravel(joinAddress, ETravelType::TRAVEL_Absolute);
 	}
 }
 

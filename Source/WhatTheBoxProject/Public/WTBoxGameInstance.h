@@ -10,6 +10,19 @@
 /**
  * 
  */
+USTRUCT()
+struct FSessionInfo
+{
+	GENERATED_BODY()
+	FString roomName;
+	int32 currentPlayers;
+	int32 maxPlayers;
+	int32 gamePlayTime;
+	int32 ping;
+	int32 index;
+};
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSearchResult, FSessionInfo, sessionInfo);
+
 UCLASS()
 class WHATTHEBOXPROJECT_API UWTBoxGameInstance : public UGameInstance
 {
@@ -17,8 +30,12 @@ class WHATTHEBOXPROJECT_API UWTBoxGameInstance : public UGameInstance
 
 public:
 	UWTBoxGameInstance();
+
 	virtual void Init() override;
 
+	FOnSearchResult searchResultDele;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class USessionSlotWidget> sessionSlot;
 	IOnlineSessionPtr wtbSessionInterface;
 	FName sessionID;
 	TSharedPtr<FOnlineSessionSearch> sessionSearch;
@@ -28,18 +45,17 @@ public:
 		int32 maxSearchCount = 20;
 
 public:
-	void CreatewtboxSession(FString roomName);
+	void CreatewtboxSession(FString roomName, int32 playerCount);
+	void CreateMySessionServer(bool bIsSuccess);
 
 	UFUNCTION()
 	void OnCreateSessionComplete(FName sessionName, bool bIsSuccess);
 
+
 	void FindwtbSessions();
-	
 	void OnFindSessionComplete(bool bWasSuccessful);
 
-	void CreateMySessionServer(bool bIsSuccess);
-
-	void CreateMySessionComplete();
-
-	
+	void JoinwtbSessions(int32 sessionIndex);
+	void OnJoinSessionComplete(FName sessionName, EOnJoinSessionCompleteResult::Type joinResult);
+		
 };
