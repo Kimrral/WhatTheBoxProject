@@ -85,9 +85,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bCanFire = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		bool bIsBoxUp = false;
-	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		//bool bBoxCanMove = true;
+		bool bIsBoxUp = false;	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int32 maxBulletCount = 3;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -114,6 +112,10 @@ protected:
 	void Look(const FInputActionValue& Value);
 
 	void Fire();
+	UFUNCTION(Server, Unreliable)
+	void ServerFire();
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastFire();
 
 	UFUNCTION(Server, Unreliable)
 	void ServerFire();
