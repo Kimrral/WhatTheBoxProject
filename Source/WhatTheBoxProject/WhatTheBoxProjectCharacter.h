@@ -59,6 +59,7 @@ public:
 		class UUserWidget* BulCountUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UUserWidget* HPUI;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USoundBase* fireSound;	
@@ -66,7 +67,8 @@ public:
 		class USoundBase* knifeOnSound;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USoundBase* reloadSound;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundAttenuation* soundAtt;
 
 
 	UPROPERTY(EditAnywhere)
@@ -75,24 +77,25 @@ public:
 		TSubclassOf<class UUserWidget> HPUIFactory;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> BulCountUIFactory;
+	
 
 	AWhatTheBoxProjectCharacter();
 
 	void Tick(float DeltaSeconds);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite)
 		bool isUsingKnife = false;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite)
 		bool bCanFire = true;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		bool bIsBoxUp = false;	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int32 maxBulletCount = 3;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly,Replicated, BlueprintReadWrite)
 		int32 curBulletCount;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		int32 maxHP = 3;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly,Replicated, BlueprintReadWrite)
 		int32 curHP;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APlayerBullet> bulletFactory;
@@ -106,20 +109,38 @@ protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
+	UFUNCTION(Server, Unreliable)
+	void ServerBoxMove();
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastMove();
 	void MoveRelease(const FInputActionValue& Value);
 
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
-
+public:
 	void Fire();
 	UFUNCTION(Server, Unreliable)
 	void ServerFire();
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastFire();
 
+	UFUNCTION()
+	void SetHealth(int32 value);
+
+	UFUNCTION()
+	void AddHealth(int32 value);
+
+	UFUNCTION(Server, Unreliable)
+	void ServerDamageProcess(int32 value);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDamageProcess();
 
 	void ChangeWeapon();
-
+	UFUNCTION(Server, Unreliable)
+	void ServerChangeWeapon();
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastChangeWeapon();
 	UFUNCTION(BlueprintImplementableEvent)
 	void ResetFireCoolDown();
 
@@ -128,12 +149,6 @@ protected:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void ResetKnifeLocation();
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void SetImageAlphaForCurBullets();
-
-	UFUNCTION(BlueprintImplementableEvent)
-		void SetImageAlphaForHP();
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void BoxUp();
@@ -159,6 +174,19 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void BoxHit();
+
+	FORCEINLINE int32 GetHealth() { return curHP; };
+	FORCEINLINE int32 GetAmmo() { return curBulletCount; };
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class USoundBase* explosionSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BoxSettings)
+		class UParticleSystem* explosionParticle;
+
+
+
+
 
 };
 
