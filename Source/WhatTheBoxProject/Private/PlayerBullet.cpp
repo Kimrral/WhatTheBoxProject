@@ -53,29 +53,12 @@ void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
 	if(HasAuthority())
 	{
-	if(Character!=nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Bullet Attacked"))
-		Character->curHP--;
-		Character->BoxHit();
-		if(Character->curHP<=0)			
+		if(Character!=nullptr)
 		{
-			FTimerHandle destroyTimerHandle;
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, Character->BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-
-			Character->BoxBodyComp->SetVisibility(false);
-			Character->DestroyedBoxBodyComp->SetVisibility(true);
-			
-
-			GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
-				{
-					Character->Destroy();
-
-				}), 1.5f, false);
+			Character->ServerDamageProcess(-1);
+		
+			this->Destroy();
 		}
-	}
-	this->Destroy();
 	}
 	
 }

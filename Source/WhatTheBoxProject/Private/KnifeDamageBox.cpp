@@ -48,31 +48,15 @@ void AKnifeDamageBox::Tick(float DeltaTime)
 void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(HasAuthority())
-	{
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
-	
-	if (Character != nullptr)
+	if (HasAuthority())
 	{
-		if(HasAuthority())
-		{			
-			UE_LOG(LogTemp, Warning, TEXT("Knife Attaked"))
-			Character->curHP-=1;		
-			if (Character->curHP <= 0)
-			{
-				FTimerHandle destroyTimerHandle;
-				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
-				UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, Character->BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-				ChangeBoxMesh();				
+		if (Character != nullptr)
+		{
+			Character->ServerDamageProcess(-3);
 
-				GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
-				{
-					Character->Destroy();
-					
-				}), 1.5f, false);
-			}
+			this->Destroy();
 		}
-	 }
 	}
 }
 

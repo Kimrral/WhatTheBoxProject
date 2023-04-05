@@ -14,7 +14,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "PlayerInformationWidget.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Net/UnrealNetwork.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -118,9 +120,8 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 void AWhatTheBoxProjectCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+		
 	
-	SetImageAlphaForHP();
 }
 
 
@@ -175,7 +176,7 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 
-	BoxUp();
+	ServerBoxMove();
 	
 	/*if(bIsBoxUp==false)
 	{
@@ -198,6 +199,16 @@ void AWhatTheBoxProjectCharacter::Move(const FInputActionValue& Value)
 
 }
 
+void AWhatTheBoxProjectCharacter::ServerBoxMove_Implementation()
+{
+	MulticastMove();
+}
+
+void AWhatTheBoxProjectCharacter::MulticastMove_Implementation()
+{
+	BoxUp();
+}
+
 void AWhatTheBoxProjectCharacter::MoveRelease(const FInputActionValue& Value)
 {
 }
@@ -217,24 +228,36 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
-	ServerFire();
+	if (bCanFire)
+	{
+		ServerFire();
+		if(bCanFire&&isUsingKnife==false&&curBulletCount<=0)
+		{
+			ResetFireCoolDown();
+			
+		}
+	}
+	
+}
+
+void AWhatTheBoxProjectCharacter::SetHealth(int32 value)
+{
+	curHP = FMath::Min(maxHP, value);
+}
+
+void AWhatTheBoxProjectCharacter::AddHealth(int32 value)
+{
+	curHP = FMath::Clamp(curHP + value, 0, maxHP);
 }
 
 void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 {
-	MulticastFire();
-}
-
-void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
-{
-	if (bCanFire == false)
-	{
-		return;
-	}
+	
+	
 	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), knifeOnSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), knifeOnSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 1, 1, 0, soundAtt);
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
@@ -261,30 +284,80 @@ void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
 
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, soundAtt);
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
-			curBulletCount--;
-			SetImageAlphaForCurBullets();
+			MulticastFire();
+	
+			curBulletCount--;			
 
 		}
 		// if Player Using Gun and have no ammo
 		else
 		{
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-			bCanFire = false;
-			ResetFireCoolDown();
 
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, soundAtt, nullptr);
+			bCanFire = false;
+
+			FTimerHandle reloadHandle;
+			GetWorldTimerManager().SetTimer(reloadHandle, FTimerDelegate::CreateLambda([this]()->void
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Reload Complete"));
+				curBulletCount = 3;
+				bCanFire=true;
+			}), 1.2f, false);
+			
+			
+			
 		}
+	}	
+}
+
+void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
+{	
+	FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);	
+}
+
+void AWhatTheBoxProjectCharacter::ServerDamageProcess_Implementation(int32 value)
+{
+	AddHealth(value);
+	MulticastDamageProcess();
+}
+
+void AWhatTheBoxProjectCharacter::MulticastDamageProcess_Implementation()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Bullet Attacked"))
+	BoxHit();
+	if (curHP <= 0)
+	{
+		FTimerHandle destroyTimerHandle;
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
+
+		BoxBodyComp->SetVisibility(false);
+		DestroyedBoxBodyComp->SetVisibility(true);
+
+
+		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+			{
+				this->Destroy();
+
+			}), 1.5f, false);
 	}
 }
 
 void AWhatTheBoxProjectCharacter::ChangeWeapon()
 {
+	ServerChangeWeapon();
+
+}
+
+void AWhatTheBoxProjectCharacter::MulticastChangeWeapon_Implementation()
+{
 	if (isUsingKnife == false)
 	{
 
-		CutterKnifeComp->SetVisibility(true);		
+		CutterKnifeComp->SetVisibility(true);
 		isUsingKnife = true;
 		GetCharacterMovement()->MaxWalkSpeed = 650.0f;
 	}
@@ -294,4 +367,21 @@ void AWhatTheBoxProjectCharacter::ChangeWeapon()
 		isUsingKnife = false;
 		GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 	}
+}
+
+void AWhatTheBoxProjectCharacter::ServerChangeWeapon_Implementation()
+{
+	MulticastChangeWeapon();
+}
+
+
+void AWhatTheBoxProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWhatTheBoxProjectCharacter, isUsingKnife);
+	DOREPLIFETIME(AWhatTheBoxProjectCharacter, bCanFire);
+	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curBulletCount);
+	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curHP);
+
 }
