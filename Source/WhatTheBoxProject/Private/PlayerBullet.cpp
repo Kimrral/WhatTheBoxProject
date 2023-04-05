@@ -14,6 +14,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
+// 점수를 위한 헤더추가
+#include "GameFramework/PlayerState.h"
 
 // Sets default values
 APlayerBullet::APlayerBullet()
@@ -55,8 +57,16 @@ void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* 
 	{
 		if(Character!=nullptr)
 		{
+			if (Character->GetHealth() <= 0)
+			{
+				AWhatTheBoxProjectCharacter* myOwner = Cast<AWhatTheBoxProjectCharacter>(GetOwner());
+				if (myOwner != nullptr)
+				{
+					myOwner->GetPlayerState()->SetScore(myOwner->GetPlayerState()->GetScore() + 1);
+				}
+			}
+
 			Character->ServerDamageProcess(-1);
-		
 			this->Destroy();
 		}
 	}

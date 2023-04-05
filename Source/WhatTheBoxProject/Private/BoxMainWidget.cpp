@@ -11,6 +11,9 @@
 #include "BoxGameMode.h"
 #include "Net/UnrealNetwork.h"
 #include "TimerActor.h"
+#include "GameFrameWork/PlayerState.h"
+#include "BoxPlayerState.h"
+#include "BoxGameStateBase.h"
 
 void UBoxMainWidget::NativeConstruct()
 {
@@ -38,6 +41,24 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		inGameTimer->Server_UpdateTimerUI();
 	}
+
+	// 플레이어 점수
+	FString playerList;
+
+	if (GetWorld()->GetGameState() != nullptr)
+	{
+		ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
+
+		for (const auto& ps : GS->GetPlayerListByScore())
+		{
+			FString playerName = ps->GetPlayerName();
+			int32 playerScore = ps->GetScore();
+			playerList.Append(FString::Printf(TEXT("%s : %d\n"), *playerName, playerScore));
+		}
+
+		TXT_RankID1->SetText(FText::FromString(playerList));
+	}
+	
 }
 
 void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
