@@ -30,6 +30,13 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UBoxMainWidget> MainWidget;
 
+	// 게임오버위젯
+	UPROPERTY(BlueprintReadWrite, Category = "Widget", Replicated)
+		class UGameOverWidget* GameOver_UI;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<class UGameOverWidget> GameOverWidget;
+
 	// 플레이어
 	UPROPERTY(BlueprintReadWrite, Category = "Player")
 		class AWhatTheBoxProjectCharacter* Player;
@@ -60,6 +67,14 @@ public:
 
 	UFUNCTION(NetMulticast, UnReliable)
 	void Multicast_UpdateTimerUI();
+
+	
+	UFUNCTION(Server, UnReliable)
+	void Server_ResultUI();
+	
+	UFUNCTION(NetMulticast, UnReliable)
+	void Multicast_ResultUI();
+
 
 	// GetLifetimeReplicatedprops
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

@@ -8,13 +8,14 @@
 #include "Net/UnrealNetwork.h"
 #include "../WhatTheBoxProjectCharacter.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameOverWidget.h"
 
 // Sets default values
 ATimerActor::ATimerActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 // Called when the game starts or when spawned
@@ -54,7 +55,12 @@ void ATimerActor::GameStartCountDown()
 			{
 				GameTimeSec--;
 			}
-
+			// 만약 0분이 되면 게임을 종료한다.
+			if (GameTimeMin == 0 && GameTimeSec == 0)
+			{
+				UE_LOG( LogTemp, Warning, TEXT("Game Over") );
+				Server_ResultUI();
+			}
 		}
 	}
 }
@@ -88,10 +94,32 @@ void ATimerActor::Multicast_UpdateTimerUI_Implementation()
 	}
 }
 
+void ATimerActor::Server_ResultUI_Implementation()
+{
+	Multicast_ResultUI();
+}
+
+void ATimerActor::Multicast_ResultUI_Implementation()
+{
+	GameOver_UI = CreateWidget<UGameOverWidget>(GetWorld(), GameOverWidget);
+
+	if (GameOver_UI != nullptr)
+	{
+		// 결과 위젯을 띄운다.
+		GameOver_UI->AddToViewport();
+
+		// 마우스커서 보이게하기
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->bShowMouseCursor = true;
+	}
+
+}
+
 void ATimerActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	DOREPLIFETIME(ATimerActor, GameTimeSec);
 	DOREPLIFETIME(ATimerActor, GameTimeMin);
 	DOREPLIFETIME(ATimerActor, Main_UI);
+	DOREPLIFETIME(ATimerActor, GameOver_UI)
 }
 

@@ -19,5 +19,4 @@ void ABoxPlayerController::BeginPlay()
 			MainUI->AddToViewport();
 		}
 	}
-
 }
