@@ -217,7 +217,17 @@ void AWhatTheBoxProjectCharacter::Look(const FInputActionValue& Value)
 
 void AWhatTheBoxProjectCharacter::Fire()
 {
-	if(bCanFire==false)
+	ServerFire();
+}
+
+void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
+{
+	MulticastFire();
+}
+
+void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
+{
+	if (bCanFire == false)
 	{
 		return;
 	}
@@ -229,15 +239,15 @@ void AWhatTheBoxProjectCharacter::Fire()
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
 		FVector KnifeForward = BoxBodyComp->GetSocketLocation(FName("FireSocket"));
-		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride=ESpawnActorCollisionHandlingMethod::AlwaysSpawn;		
-		auto pastPos = CutterKnifeComp->GetRelativeTransform();		
-		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);		
+		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		auto pastPos = CutterKnifeComp->GetRelativeTransform();
+		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);
 
-		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward+BoxBodyComp->GetForwardVector()*90.0f, FRotator::ZeroRotator, params);
+		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward + BoxBodyComp->GetForwardVector() * 90.0f, FRotator::ZeroRotator, params);
 
 		ResetKnifeLocation();
-				
-		bCanFire=false;
+
+		bCanFire = false;
 		ResetKnifeCoolDown();
 
 
@@ -248,7 +258,7 @@ void AWhatTheBoxProjectCharacter::Fire()
 		// if Player Using Gun and have ammo
 		if (curBulletCount > 0)
 		{
-			
+
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, nullptr, nullptr, true);
@@ -256,15 +266,15 @@ void AWhatTheBoxProjectCharacter::Fire()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
 			curBulletCount--;
 			SetImageAlphaForCurBullets();
-			
+
 		}
 		// if Player Using Gun and have no ammo
 		else
 		{
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 			bCanFire = false;
-			ResetFireCoolDown();		
-		
+			ResetFireCoolDown();
+
 		}
 	}
 }

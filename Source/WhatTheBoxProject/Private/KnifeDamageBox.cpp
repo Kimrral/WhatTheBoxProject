@@ -6,6 +6,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 
 // Sets default values
@@ -22,6 +23,8 @@ AKnifeDamageBox::AKnifeDamageBox()
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKnifeDamageBox::OnOverlap);
 	boxComp->SetGenerateOverlapEvents(true);
 
+	SetReplicateMovement(true);
+	SetReplicates(true);
 
 }
 
@@ -49,27 +52,46 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 	
 	if (Character != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Knife Attaked"))
-		Character->curHP-=1;		
-		if (Character->curHP <= 0)
-		{
-			FTimerHandle destroyTimerHandle;
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, Character->BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-			Character->BoxBodyComp->SetVisibility(false);
-			Character->DestroyedBoxBodyComp->SetVisibility(true);
-			
-
-			GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+		if(HasAuthority())
+		{			
+			UE_LOG(LogTemp, Warning, TEXT("Knife Attaked"))
+			Character->curHP-=1;		
+			if (Character->curHP <= 0)
 			{
-				Character->Destroy();
-				
-			}), 1.5f, false);
+				FTimerHandle destroyTimerHandle;
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, Character->GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
+				UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, Character->BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
+				ChangeBoxMesh();				
 
-
-
+				GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+				{
+					Character->Destroy();
+					
+				}), 1.5f, false);
+			}
 		}
 	}
 
 }
 
+void AKnifeDamageBox::ChangeBoxMesh()
+{
+	ServerChangeBoxMesh();
+}
+
+void AKnifeDamageBox::ServerChangeBoxMesh_Implementation()
+{
+	MulticastChangeBoxMesh();
+}
+
+void AKnifeDamageBox::MulticastChangeBoxMesh_Implementation()
+{
+	Character->BoxBodyComp->SetVisibility(false);
+	Character->DestroyedBoxBodyComp->SetVisibility(true);
+}
+
+void AKnifeDamageBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(AKnifeDamageBox, boxComp);
+}

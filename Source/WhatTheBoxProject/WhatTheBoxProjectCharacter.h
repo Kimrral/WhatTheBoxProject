@@ -115,6 +115,12 @@ protected:
 
 	void Fire();
 
+	UFUNCTION(Server, Unreliable)
+	void ServerFire();
+
+	UFUNCTION(NetMulticast, Unreliable)
+		void MulticastFire();
+
 	void ChangeWeapon();
 
 	UFUNCTION(BlueprintImplementableEvent)

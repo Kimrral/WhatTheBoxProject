@@ -15,7 +15,7 @@ public:
 	// Sets default values for this actor's properties
 	APlayerBullet();
 
-	UPROPERTY(EditAnywhere, Category = "Bullet Setting")
+	UPROPERTY(EditAnywhere, Replicated, Category = "Bullet Setting")
 		class UStaticMeshComponent* meshComp;
 
 	UPROPERTY(EditAnywhere, Category = "Bullet Setting")

@@ -10,7 +10,9 @@
 //#include "WhatTheBoxProjectCharacter.generated.h"
 #include <GameFramework/ProjectileMovementComponent.h>
 
+#include "BoxPlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 
 // Sets default values
@@ -40,7 +42,9 @@ APlayerBullet::APlayerBullet()
 
 		sphereComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerBullet::OnOverlap);
 		sphereComp->SetGenerateOverlapEvents(true);
-	
+
+		SetReplicateMovement(true);
+		SetReplicates(true);
 
 }
 
@@ -90,3 +94,8 @@ void APlayerBullet::Tick(float DeltaTime)
 
 }
 
+void APlayerBullet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(APlayerBullet, meshComp);
+}

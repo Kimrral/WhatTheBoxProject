@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* BoxBodyComp;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = Input, meta = (AllowPrivateAccess = "true"))
 		class UStaticMeshComponent* CutterKnifeComp;
 
 public:

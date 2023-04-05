@@ -23,7 +23,7 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=BoxSettings)
+	UPROPERTY(EditAnywhere, Replicated, BlueprintReadOnly, Category=BoxSettings)
 	class UBoxComponent* boxComp;
 
 	UFUNCTION()
@@ -36,5 +36,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class USoundBase* explosionSound;
+
+	/*박스의 외관을 바꾸는 함수*/
+	void ChangeBoxMesh();
+	UFUNCTION(Server, Unreliable)
+		void ServerChangeBoxMesh();
+	UFUNCTION(NetMulticast, Unreliable)
+		void MulticastChangeBoxMesh();
 
 };

@@ -43,6 +43,9 @@ void UWTBoxGameInstance::CreatewtboxSession(FString roomName, int32 playerCount)
 		sessionsettings.bShouldAdvertise = true;
 		wtbSessionInterface->CreateSession(0, sessionID, sessionsettings);
 		sessionsettings.Set(FName("KEY_RoomName"), roomName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
+		sessionsettings.bShouldAdvertise = true;
+
+		wtbSessionInterface->CreateSession(0, sessionID, sessionsettings);
 	}
 }
 
