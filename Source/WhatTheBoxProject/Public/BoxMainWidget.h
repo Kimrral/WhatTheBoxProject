@@ -78,6 +78,20 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
 	class UTextBlock* TXT_RankScore4;
 
+	UPROPERTY()
+	TArray <UTextBlock*> textblockRankIdArray;
+	UPROPERTY()
+	TArray <UTextBlock*> textblockRankScoreArray;
+	TArray <int> tempScoreArray;
+
+	FString myID;
+	FString winnerID;
+
+	int tempScore1;
+	int tempScore2;
+	int tempScore3;
+	int tempScore4;
+
 	//--------------------순위ui부분--------------------//
 // 함수 부분
 	// 남은 시간 텍스트출력
