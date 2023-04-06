@@ -126,7 +126,7 @@ void AWhatTheBoxProjectCharacter::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 		
 	if (curHP <= 0)
-	{
+	{		
 		DieProcess();
 	}
 }
@@ -260,7 +260,7 @@ void AWhatTheBoxProjectCharacter::AddHealth(int32 value)
 void AWhatTheBoxProjectCharacter::DieProcess()
 {	
 	if (HasAuthority())
-	{
+	{		
 		FTimerHandle destroyTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
 			{
@@ -336,7 +336,8 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			MulticastFire();
 	
-			curBulletCount--;			
+			//curBulletCount--;
+			curBulletCount=FMath::Clamp(curBulletCount-1, 0, 3);
 
 		}
 		// if Player Using Gun and have no ammo

@@ -164,6 +164,8 @@ public:
 		void BoxUp();
 	UFUNCTION(BlueprintImplementableEvent)
 		void BoxDown();
+	UFUNCTION(BlueprintImplementableEvent)
+		void RemoveWidget();
 
 
 

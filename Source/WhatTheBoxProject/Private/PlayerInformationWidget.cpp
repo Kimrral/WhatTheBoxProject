@@ -23,6 +23,7 @@ void UPlayerInformationWidget::NativeTick(const FGeometry& MyGeometry, float InD
 	if(player!=nullptr)
 	{
 	curBulText->SetText(FText::AsNumber(player->GetAmmo()));
+		player->curBulletCount=FMath::Clamp(player->curBulletCount, 0, 3);
 	BulSlider->SetValue((player->GetAmmo())*0.33);
 	HPSlider->SetValue((player->GetHealth())*0.33);
 	}
