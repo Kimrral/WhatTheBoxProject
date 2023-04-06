@@ -15,12 +15,25 @@ class WHATTHEBOXPROJECT_API ABoxPlayerController : public APlayerController
 	GENERATED_BODY()
 	
 
-protected:
-	virtual void BeginPlay() override;
+
 
 public:
+	ABoxPlayerController();
+
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
+
+	// ���� ����
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UBoxMainWidget> mainWidget;
+	UPROPERTY(EditAnywhere)
+	class UBoxMainWidget* Main_UI;
+
+// 	// Enterance widget
+// 	UPROPERTY(EditAnywhere)
+// 	TSubclassOf<class UEnteranceWidget> EnterWidget;
+// 	UPROPERTY(EditAnywhere)
+// 	class UEnteranceWidget* Enter_UI;
 
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class APlayerStart> playerStartFactory;
@@ -34,5 +47,9 @@ public:
 	void Respawn(class AWhatTheBoxProjectCharacter* player);
 
 
+	UPROPERTY()
+	class UWTBoxGameInstance* BoxInstance;
 
+	UFUNCTION(Server, Unreliable)
+	void ServerSetName(const FString& name);
 };

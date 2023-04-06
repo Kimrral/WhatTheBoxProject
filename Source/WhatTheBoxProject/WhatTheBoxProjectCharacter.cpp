@@ -323,13 +323,17 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 		// if Player Using Gun and have ammo
 		if (curBulletCount > 0)
 		{
+
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));		
-			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+		//	GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			bullet->SetOwner(this);
+			
 			MulticastFire();
 			//curBulletCount--;
 			curBulletCount=FMath::Clamp(curBulletCount-1, 0, 3);
-			
+		
 			
 		}
 		// if Player Using Gun and have no ammo

@@ -7,7 +7,14 @@
 #include "GameFramework/PlayerStart.h"
 #include "EngineUtils.h"
 #include "Kismet/GameplayStatics.h"
+#include "WTBoxGameInstance.h"
+#include "BoxPlayerState.h"
+#include "GameFrameWork/PlayerState.h"
 
+
+ABoxPlayerController::ABoxPlayerController()
+{
+}
 
 void ABoxPlayerController::BeginPlay()
 {
@@ -22,6 +29,22 @@ void ABoxPlayerController::BeginPlay()
 			MainUI->AddToViewport();
 		}
 	}
+	BoxInstance = Cast<UWTBoxGameInstance>(GetGameInstance());
+	if (BoxInstance != nullptr)
+	{
+		ServerSetName(BoxInstance->sessionID.ToString());
+	}
+
+}
+
+void ABoxPlayerController::Tick(float DeltaSeconds)
+{
+
+}
+
+void ABoxPlayerController::ServerSetName_Implementation(const FString& name)
+{
+	GetPlayerState<ABoxPlayerState>()->SetPlayerName(name);
 }
 
 void ABoxPlayerController::Respawn(AWhatTheBoxProjectCharacter* player)

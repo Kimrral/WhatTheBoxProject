@@ -14,6 +14,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
+// 점수를 위한 헤더추가
+#include "GameFramework/PlayerState.h"
 
 // Sets default values
 APlayerBullet::APlayerBullet()
@@ -50,14 +52,34 @@ APlayerBullet::APlayerBullet()
 
 void APlayerBullet::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
-	if(HasAuthority())
+	if (GetOwner() == nullptr)
 	{
-		if(Character!=nullptr)
+		return;
+	}
+	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
+
+	if (OtherActor != GetOwner())
+	{
+		if (HasAuthority())
 		{
-			Character->ServerDamageProcess(-1);
-		
-			this->Destroy();
+			if (Character != nullptr && Character->GetController() != nullptr)
+			{
+				//if (Character->GetController()->IsLocalController() != false)
+				//{
+					if (Character->GetHealth() <= 1)
+					{
+						AWhatTheBoxProjectCharacter* myOwner = Cast<AWhatTheBoxProjectCharacter>(GetOwner());
+						if (myOwner != nullptr)
+						{
+							myOwner->GetPlayerState()->SetScore(myOwner->GetPlayerState()->GetScore() + 1);
+							UE_LOG(LogTemp, Warning, TEXT("%d"), myOwner->GetPlayerState()->GetScore());
+						}
+					}
+
+					Character->ServerDamageProcess(-1);
+					Destroy();
+				//}
+			}
 		}
 	}
 	

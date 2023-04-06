@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Bullet Setting")
 		class UProjectileMovementComponent* movementComp;
 
+// 	UPROPERTY(EditAnywhere, Category = "Bullet Setting")
+// 		int32 BulletDamage = 1;
+
 		UFUNCTION()
 		void OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
