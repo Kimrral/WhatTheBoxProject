@@ -59,6 +59,8 @@ public:
 		class UUserWidget* BulCountUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UUserWidget* HPUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+		class UUserWidget* respawnTimerUI;
 	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -77,7 +79,8 @@ public:
 		TSubclassOf<class UUserWidget> HPUIFactory;
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> BulCountUIFactory;
-	
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UUserWidget> respawnTimerUIFactory;
 
 	AWhatTheBoxProjectCharacter();
 

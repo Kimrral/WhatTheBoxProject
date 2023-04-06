@@ -108,6 +108,7 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
 	crosshairUI->AddToViewport();
 
+	respawnTimerUI = CreateWidget<UUserWidget>(GetWorld(), respawnTimerUIFactory);
 
 	curBulletCount = maxBulletCount;
 	curHP = maxHP;
@@ -262,7 +263,8 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
 		FVector KnifeForward = BoxBodyComp->GetSocketLocation(FName("FireSocket"));
-		FActorSpawnParameters params;		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		FActorSpawnParameters params;
+		params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		auto pastPos = CutterKnifeComp->GetRelativeTransform();
 		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);
 
@@ -334,15 +336,24 @@ void AWhatTheBoxProjectCharacter::MulticastDamageProcess_Implementation()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
 		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 
+		if(GetController()!=nullptr&&GetController()->IsLocalController())
+		{
 		BoxBodyComp->SetVisibility(false);
 		DestroyedBoxBodyComp->SetVisibility(true);
+		GetCharacterMovement()->DisableMovement();
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		bUseControllerRotationYaw = false;
+		FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
+		respawnTimerUI->AddToViewport();
 
+		}
 
 		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
 			{
 				this->Destroy();
 
-			}), 1.5f, false);
+			}), 5.0f, false);
 	}
 }
 
