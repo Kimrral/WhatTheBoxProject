@@ -108,8 +108,8 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	GetCharacterMovement()->MaxWalkSpeed = 450.0f;
 
 	CutterKnifeComp->SetVisibility(false);
-	crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
-	crosshairUI->AddToViewport();
+	//crosshairUI = CreateWidget<UUserWidget>(GetWorld(), crosshairFactory);
+	//crosshairUI->AddToViewport();
 
 	respawnTimerUI = CreateWidget<UUserWidget>(GetWorld(), respawnTimerUIFactory);
 

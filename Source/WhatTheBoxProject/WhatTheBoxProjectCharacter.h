@@ -53,8 +53,8 @@ public:
 		class UStaticMeshComponent* CutterKnifeComp;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UUserWidget* crosshairUI;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UUserWidget* crosshairUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 		class UUserWidget* BulCountUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -73,8 +73,8 @@ public:
 	class USoundAttenuation* soundAtt;
 
 
-	UPROPERTY(EditAnywhere)
-		TSubclassOf<class UUserWidget> crosshairFactory;
+	//UPROPERTY(EditAnywhere)
+		//TSubclassOf<class UUserWidget> crosshairFactory;
 		UPROPERTY(EditAnywhere)
 		TSubclassOf<class UUserWidget> HPUIFactory;
 	UPROPERTY(EditAnywhere)
