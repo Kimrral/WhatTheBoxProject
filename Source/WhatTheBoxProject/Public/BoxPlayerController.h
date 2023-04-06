@@ -25,4 +25,9 @@ public:
 	// Gamemodebase 
 	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
 	class AWhatTheBoxGameModeBase* GM;
+
+	void Respawn(class AWhatTheBoxProjectCharacter* player);
+
+
+
 };

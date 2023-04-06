@@ -20,9 +20,11 @@ void UPlayerInformationWidget::NativeTick(const FGeometry& MyGeometry, float InD
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
+	if(player!=nullptr)
+	{
 	curBulText->SetText(FText::AsNumber(player->GetAmmo()));
 	BulSlider->SetValue((player->GetAmmo())*0.33);
 	HPSlider->SetValue((player->GetHealth())*0.33);
-
+	}
 
 }
