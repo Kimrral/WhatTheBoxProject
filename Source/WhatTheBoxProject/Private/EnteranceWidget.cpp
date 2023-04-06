@@ -13,6 +13,8 @@
 #include "Components/WidgetSwitcher.h"
 #include "WTBoxGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "WTBoxGameStateBase.h"
+#include "EnteranceWidget.h"
 
 
 void UEnteranceWidget::NativeConstruct()
@@ -42,22 +44,33 @@ void UEnteranceWidget::NativeConstruct()
 }
 
 //화면 맨 처음 Play버튼 누르면 방 찾는 위젯 나온다
+//근데 이제 방 리스트도 떠야해
 void UEnteranceWidget::ClickPlay()
 {
+
 	widgetSwitcher->SetActiveWidgetIndex(1);
+	
+	RefreshList();
+	
 }
 
 void UEnteranceWidget::QuickPlay()
 {
 	if (!(editText_PlayerName->GetText().IsEmpty()))
 	{
+		gameInstance->sessionID = FName(*editText_PlayerName->GetText().ToString());
 		UGameplayStatics::OpenLevel(GetWorld(), FName("KHJTestMap"));
 	}
 }
 
 void UEnteranceWidget::ClickCreateRoom()
 {
-	widgetSwitcher->SetActiveWidgetIndex(2);
+	if(!(editText_PlayerName->GetText().IsEmpty()))
+	{
+		widgetSwitcher->SetActiveWidgetIndex(2);
+		gameInstance->sessionID = FName(*editText_PlayerName->GetText().ToString());
+	}
+	
 }
 
 void UEnteranceWidget::BackToMenu()
@@ -71,10 +84,11 @@ void UEnteranceWidget::AddRoomSlot(FSessionInfo sessionInfo)
 	if (searchSlotListWidget != nullptr)
 	{
 		searchSlotListWidget->text_RoomName->SetText(FText::FromString(sessionInfo.roomName));
-		searchSlotListWidget->text_GameMode->SetText(FText::FromString(TEXT("DeathMatch")));
+		searchSlotListWidget->text_GameMode->SetText(FText::FromString("DeathMatch"));
 		searchSlotListWidget->text_MemberCount->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), sessionInfo.currentPlayers, sessionInfo.maxPlayers)));
-		searchSlotListWidget->text_GameTime->SetText(FText::FromString(FString::Printf(TEXT(" % d"), sessionInfo.gamePlayTime)));
+		searchSlotListWidget->text_GameTime->SetText(FText::FromString(FString::Printf(TEXT("%d"), sessionInfo.gamePlayTime)));
 		searchSlotListWidget->text_Description->SetText(FText::AsNumber(sessionInfo.ping));
+		searchSlotListWidget->index = sessionInfo.index;
 		sbox_RoomList->AddChild(searchSlotListWidget);
 	}
 }
@@ -88,12 +102,17 @@ void UEnteranceWidget::CancelCreation()
 /*Room Creation Widget에서 CreateRoom버튼 눌렀을 때*/
 void UEnteranceWidget::CreateSession()
 {
-	if(!(editText_RoomName->GetText().IsEmpty()))
+	if(gameInstance != nullptr)
 	{
+		//방 이름: editText_RoomName->GetText().ToString()
+		//플레이어 이름:editText_PlayerName
+		//플레이어 수:
 		int32 playerCounts = FMath::RoundHalfFromZero(slider_MaxPlayers->GetValue());
-		//int32 maxDurations = FMath::RoundHalfFromZero(slider_MatchDurations->GetValue());
-		gameInstance->CreatewtboxSession(editText_RoomName->GetText().ToString(),playerCounts);		
+		//플레이 시간:
+		int32 maxDurations = FMath::RoundHalfFromZero(slider_MatchDurations->GetValue());
+		gameInstance->CreatewtboxSession(editText_RoomName->GetText().ToString(), playerCounts, maxDurations);
 	}
+	
 }
 
 void UEnteranceWidget::OnMovePlayerSlider(float value)
@@ -108,4 +127,9 @@ void UEnteranceWidget::OnMoveDurationSlider(float value)
 	text_MatchDurations->SetText(FText::AsNumber(val));
 }
 
+void UEnteranceWidget::RefreshList()
+{
+	sbox_RoomList->ClearChildren();
+	gameInstance->FindwtbSessions();
+}
 

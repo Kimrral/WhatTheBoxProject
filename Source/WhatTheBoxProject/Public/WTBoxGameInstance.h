@@ -32,7 +32,6 @@ public:
 	UWTBoxGameInstance();
 
 	virtual void Init() override;
-
 	FOnSearchResult searchResultDele;
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class USessionSlotWidget> sessionSlot;
@@ -42,20 +41,25 @@ public:
 
 	//세션이 나타날 최대 갯수
 	UPROPERTY(EditDefaultsOnly, Category = GameSettings)
-		int32 maxSearchCount = 20;
+	int32 maxSearchCount = 20;
+
+	class UEnteranceWidget* enteranceWidget;
+
 
 public:
-	void CreatewtboxSession(FString roomName, int32 playerCount);
+	void CreatewtboxSession(FString roomName, int32 playerCount, int32 matchDurations);
 	void CreateMySessionServer(bool bIsSuccess);
+	//void RefreshList();
 
 	UFUNCTION()
 	void OnCreateSessionComplete(FName sessionName, bool bIsSuccess);
 
-
+	//세션찾기
 	void FindwtbSessions();
 	void OnFindSessionComplete(bool bWasSuccessful);
 
 	void JoinwtbSessions(int32 sessionIndex);
 	void OnJoinSessionComplete(FName sessionName, EOnJoinSessionCompleteResult::Type joinResult);
-		
+
+
 };

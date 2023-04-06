@@ -11,12 +11,6 @@ void USessionSlotWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	text_RoomName->SetText(FText::FromString(""));
-	text_GameMode->SetText(FText::FromString(""));
-	text_GameTime->SetText(FText::FromString(""));
-	text_MemberCount->SetText(FText::FromString(""));
-	text_Description->SetText(FText::FromString(""));
-
 	gameInstance = Cast<UWTBoxGameInstance>(GetGameInstance());
 	btn_JoinRoom->OnClicked.AddDynamic(this, &USessionSlotWidget::ClickJoinRoom);
 }

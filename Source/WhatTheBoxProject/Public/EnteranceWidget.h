@@ -77,6 +77,10 @@ public:
 
 		class UWTBoxGameInstance* gameInstance;
 
+		UPROPERTY(meta = (BindWidget))
+			int32 index;
+
+
 private:
 	UFUNCTION()
 	void ClickPlay();
@@ -89,6 +93,8 @@ private:
 
 	UFUNCTION()
 	void OnMoveDurationSlider(float value);
+	UFUNCTION()
+	void RefreshList();
 
 	UFUNCTION()
 	void CreateSession();
