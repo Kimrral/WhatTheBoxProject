@@ -132,10 +132,17 @@ public:
 
 	UFUNCTION()
 	void AddHealth(int32 value);
+	UFUNCTION()
+	void DieProcess();
+	UFUNCTION(Server, Unreliable)
+	void ServerDieProcess();
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastDieProcess();
 
+	UFUNCTION()
+	void DamageProcess();
 	UFUNCTION(Server, Unreliable)
 	void ServerDamageProcess(int32 value);
-
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastDamageProcess();
 
@@ -157,6 +164,7 @@ public:
 		void BoxUp();
 	UFUNCTION(BlueprintImplementableEvent)
 		void BoxDown();
+
 
 
 			
@@ -187,8 +195,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = BoxSettings)
 		class UParticleSystem* explosionParticle;
 
+		
 
-
+		
 
 
 };

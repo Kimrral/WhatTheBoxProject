@@ -21,3 +21,17 @@ void ABoxPlayerController::BeginPlay()
 	}
 
 }
+
+void ABoxPlayerController::Respawn(AWhatTheBoxProjectCharacter* player)
+{
+	if(HasAuthority()&&player!=nullptr)
+	{
+		GM=Cast<AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+		if(GM!=nullptr)
+		{
+			GM->RestartPlayer(this);
+		}
+	}
+
+
+}

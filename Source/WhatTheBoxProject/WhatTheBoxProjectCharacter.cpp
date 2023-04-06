@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "WhatTheBoxProjectCharacter.h"
+
+#include "BoxPlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InputComponent.h"
@@ -15,6 +17,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "PlayerInformationWidget.h"
+#include "WhatTheBoxGameModeBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
 
@@ -122,7 +125,10 @@ void AWhatTheBoxProjectCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 		
-	
+	if (curHP <= 0)
+	{
+		DieProcess();
+	}
 }
 
 
@@ -251,10 +257,50 @@ void AWhatTheBoxProjectCharacter::AddHealth(int32 value)
 	curHP = FMath::Clamp(curHP + value, 0, maxHP);
 }
 
-void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
+void AWhatTheBoxProjectCharacter::DieProcess()
+{	
+	if (HasAuthority())
+	{
+		FTimerHandle destroyTimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
+			{
+				ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());
+				if (cont != nullptr)
+				{				
+					this->Destroy();
+					cont->Respawn(this);					
+				}
+			}), 4.6f, false);
+		ServerDieProcess();
+		FTimerHandle respawnTimerH;
+		GetWorld()->GetTimerManager().SetTimer(respawnTimerH, FTimerDelegate::CreateLambda([this]()->void
+			{
+				ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());			
+				if (cont != nullptr)
+				{						
+					cont->Possess(this);					
+				}
+			}), 0.4f, false);
+		
+	}	
+}
+
+void AWhatTheBoxProjectCharacter::ServerDieProcess_Implementation()
 {
-	
-	
+	MulticastDieProcess();
+}
+
+void AWhatTheBoxProjectCharacter::MulticastDieProcess_Implementation()
+{
+	ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());
+	if (cont != nullptr)
+	{
+		cont->PlayerCameraManager->StartCameraFade(0, 1, 0.7, FLinearColor::Black, false, false);
+	}
+}
+
+void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
+{	
 	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
@@ -314,10 +360,18 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 	}	
 }
 
+
 void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
 {	
 	FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
 	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);	
+}
+
+
+
+void AWhatTheBoxProjectCharacter::DamageProcess()
+{
+	
 }
 
 void AWhatTheBoxProjectCharacter::ServerDamageProcess_Implementation(int32 value)
@@ -332,29 +386,23 @@ void AWhatTheBoxProjectCharacter::MulticastDamageProcess_Implementation()
 	BoxHit();
 	if (curHP <= 0)
 	{
-		FTimerHandle destroyTimerHandle;
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
-		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-
+		BoxBodyComp->SetVisibility(false);
+		DestroyedBoxBodyComp->SetVisibility(true);		
 		if(GetController()!=nullptr&&GetController()->IsLocalController())
 		{
-		BoxBodyComp->SetVisibility(false);
-		DestroyedBoxBodyComp->SetVisibility(true);
-		GetCharacterMovement()->DisableMovement();
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		bUseControllerRotationYaw = false;
-		FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
-		respawnTimerUI->AddToViewport();
-
-		}
-
-		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
-			{
-				this->Destroy();
-
-			}), 5.0f, false);
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
+			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
+			
+			GetCharacterMovement()->DisableMovement();
+			//GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			bUseControllerRotationYaw = false;
+			//FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
+			respawnTimerUI->AddToViewport();
+			GetController()->SetIgnoreMoveInput(true);
+			}
 	}
+	
 }
 
 void AWhatTheBoxProjectCharacter::ChangeWeapon()

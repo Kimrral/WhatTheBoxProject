@@ -32,7 +32,7 @@ public:
 
 	// 플레이어
 	UPROPERTY(BlueprintReadWrite, Category = "Player")
-		class AWhatTheBoxProjectCharacter* Player;
+		class AWhatTheBoxProjectCharacter* player;
 
 	// 시간 초
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,6 +54,9 @@ public:
 
 	//함수 부분
 public:
+virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
+
+
 // 	// 게임 시작시, 5분 카운트 다운
 // 	void GameStartCountDown();
 // 	
