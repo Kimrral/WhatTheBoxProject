@@ -295,7 +295,7 @@ void AWhatTheBoxProjectCharacter::MulticastDieProcess_Implementation()
 	ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());
 	if (cont != nullptr)
 	{
-		cont->PlayerCameraManager->StartCameraFade(0, 1, 0.7, FLinearColor::Black, false, false);
+		cont->PlayerCameraManager->StartCameraFade(0, 1, 1, FLinearColor::Black, false, false);
 	}
 }
 
@@ -393,13 +393,14 @@ void AWhatTheBoxProjectCharacter::MulticastDamageProcess_Implementation()
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
 			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 			
-			GetCharacterMovement()->DisableMovement();
+			GetCharacterMovement()->StopActiveMovement();
+			GetCharacterMovement()->MaxWalkSpeed = 0;
 			//GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			bUseControllerRotationYaw = false;
+			//bUseControllerRotationYaw = false;
 			//FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
 			respawnTimerUI->AddToViewport();
-			GetController()->SetIgnoreMoveInput(true);
+			//GetController()->SetIgnoreMoveInput(true);
 			}
 	}
 	

@@ -56,7 +56,6 @@ public:
 public:
 virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
-
 // 	// 게임 시작시, 5분 카운트 다운
 // 	void GameStartCountDown();
 // 	

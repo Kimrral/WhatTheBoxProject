@@ -27,8 +27,7 @@ void AWhatTheBoxGameModeBase::BeginPlay()
 }
 
 AActor* AWhatTheBoxGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
-{
-	
+{		
 	// 월드 안에 있는 APlayerStart 액터들을 가져온다.
 	for (TActorIterator<APlayerStart> iter(GetWorld()); iter; ++iter)
 	{

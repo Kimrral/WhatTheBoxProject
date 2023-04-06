@@ -22,6 +22,11 @@ public:
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UBoxMainWidget> mainWidget;
 
+	UPROPERTY(EditAnywhere)
+		TSubclassOf<class APlayerStart> playerStartFactory;
+
+	TArray<class AActor*> outActors;
+
 	// Gamemodebase 
 	UPROPERTY(BlueprintReadWrite, Category = "GameMode")
 	class AWhatTheBoxGameModeBase* GM;
