@@ -282,10 +282,13 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 		if (curBulletCount > 0)
 		{
 
+		// bullet¿¡ SetOwner¼³Á¤
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
 			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, soundAtt);
-			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			APlayerBullet* bullet = GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
+			bullet->SetOwner(this);
+			
 			MulticastFire();
 	
 			curBulletCount--;			

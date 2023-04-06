@@ -37,10 +37,19 @@ public:
 
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	public:
-		// 게임모드
-		UPROPERTY(BlueprintReadWrite, Category = "GameMode")
-			class AWhatTheBoxGameModeBase* GM;
+public:
+	// 게임모드
+	UPROPERTY(BlueprintReadWrite, Category = "Settings")
+		class AWhatTheBoxGameModeBase* GM;
+	// 플레이어 컨트롤러
+	UPROPERTY(BlueprintReadWrite, Category = "Settings")
+		class ABoxPlayerController* PC;
+// 	// 게임스테이트
+// 	UPROPERTY(BlueprintReadWrite, Category = "Settings")
+// 	class ABoxGameStateBase* GS;
+	
+
+
 
 		// 타이머액터
 		UPROPERTY(BlueprintReadWrite, Category = "Timer")
@@ -81,7 +90,7 @@ public:
 	UFUNCTION()
 	void OnChatInputEnter();
 
-
+	void RankingRefresh();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	//UFUNCTION()

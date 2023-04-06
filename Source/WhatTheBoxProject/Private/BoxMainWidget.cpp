@@ -54,6 +54,7 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			FString playerName = ps->GetPlayerName();
 			int32 playerScore = ps->GetScore();
 			playerList.Append(FString::Printf(TEXT("%s : %d\n"), *playerName, playerScore));
+			//UE_LOG(LogTemp, Warning, TEXT("%s : %d"), *playerName, playerScore);
 		}
 
 		TXT_RankID1->SetText(FText::FromString(playerList));
@@ -82,6 +83,15 @@ void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 // 			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(inGameTimer->GameTimeSec)));
 // 		}
 // 	}
+
+}
+
+void UBoxMainWidget::RankingRefresh()
+{
+	//ABoxGameStateBase 에 있는 GetPlayerListByScore() 함수 불러오기
+	ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
+	TArray<APlayerState*> PlayerList = GS->GetPlayerListByScore();
+
 
 }
 

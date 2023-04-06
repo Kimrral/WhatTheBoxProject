@@ -8,10 +8,10 @@
 // 플레이어 스테이트 리스트를 점수에따라 내림차순으로 정렬할 함수.
 TArray<APlayerState*> ABoxGameStateBase::GetPlayerListByScore()
 {
-	TArray<APlayerState*> PlayerList(PlayerArray);
+	TArray<APlayerState*> PlayerList = PlayerArray;
 
 	// 내림차순 정렬
-	PlayerList.Sort([](const APlayerState& A, const APlayerState& B) {
+	PlayerArray.Sort([](const APlayerState& A, const APlayerState& B) {
 		return A.GetScore() > B.GetScore();
 	});
 	return PlayerList;
