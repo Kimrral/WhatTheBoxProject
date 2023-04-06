@@ -86,7 +86,7 @@ public:
 
 	void Tick(float DeltaSeconds);
 
-	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite)
 		bool isUsingKnife = false;
 	UPROPERTY(EditDefaultsOnly, Replicated, BlueprintReadWrite)
 		bool bCanFire = true;
@@ -166,7 +166,8 @@ public:
 		void BoxDown();
 	UFUNCTION(BlueprintImplementableEvent)
 		void RemoveWidget();
-
+	UFUNCTION(BlueprintImplementableEvent)
+		void CameraFadeDelay();
 
 
 			

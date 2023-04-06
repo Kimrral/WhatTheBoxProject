@@ -260,7 +260,8 @@ void AWhatTheBoxProjectCharacter::AddHealth(int32 value)
 void AWhatTheBoxProjectCharacter::DieProcess()
 {	
 	if (HasAuthority())
-	{		
+	{
+		ServerDieProcess();
 		FTimerHandle destroyTimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(destroyTimerHandle, FTimerDelegate::CreateLambda([this]()->void
 			{
@@ -270,8 +271,7 @@ void AWhatTheBoxProjectCharacter::DieProcess()
 					this->Destroy();
 					cont->Respawn(this);					
 				}
-			}), 4.6f, false);
-		ServerDieProcess();
+			}), 4.6f, false);		
 		FTimerHandle respawnTimerH;
 		GetWorld()->GetTimerManager().SetTimer(respawnTimerH, FTimerDelegate::CreateLambda([this]()->void
 			{
@@ -292,11 +292,7 @@ void AWhatTheBoxProjectCharacter::ServerDieProcess_Implementation()
 
 void AWhatTheBoxProjectCharacter::MulticastDieProcess_Implementation()
 {
-	ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());
-	if (cont != nullptr)
-	{
-		cont->PlayerCameraManager->StartCameraFade(0, 1, 1, FLinearColor::Black, false, false);
-	}
+	CameraFadeDelay();
 }
 
 void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
@@ -304,7 +300,7 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 	// if Player Using Knife
 	if (isUsingKnife == true)
 	{
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), knifeOnSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 1, 1, 0, soundAtt);
+		MulticastFire();
 		auto knifeSoc = BoxBodyComp->GetSocketByName(FName("KnifeSocket"));
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = this;
@@ -320,8 +316,6 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 
 		bCanFire = false;
 		ResetKnifeCoolDown();
-
-
 	}
 	// if Player Using Gun
 	else
@@ -329,24 +323,20 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 		// if Player Using Gun and have ammo
 		if (curBulletCount > 0)
 		{
-
 			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
-			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, soundAtt);
+			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));		
 			GetWorld()->SpawnActor<APlayerBullet>(bulletFactory, BulletForward, FollowCamera->GetComponentRotation());
 			MulticastFire();
-	
 			//curBulletCount--;
 			curBulletCount=FMath::Clamp(curBulletCount-1, 0, 3);
-
+			
+			
 		}
 		// if Player Using Gun and have no ammo
 		else
 		{
-
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, soundAtt, nullptr);
+			//MulticastFire();			
 			bCanFire = false;
-
 			FTimerHandle reloadHandle;
 			GetWorldTimerManager().SetTimer(reloadHandle, FTimerDelegate::CreateLambda([this]()->void
 			{
@@ -363,9 +353,28 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 
 
 void AWhatTheBoxProjectCharacter::MulticastFire_Implementation()
-{	
-	FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
-	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);	
+{
+	//if(GetController()!=nullptr&&GetController()->IsLocalController())
+	//{
+	if(isUsingKnife==true)
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), knifeOnSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 1, 1, 0, soundAtt);
+	}
+	else
+	{
+		if(curBulletCount>=0)
+		{
+			FTransform EmitterTrans = BoxBodyComp->GetSocketTransform(FName("FireSocket"));
+			FVector BulletForward = FollowCamera->GetComponentLocation() + FollowCamera->GetForwardVector() * 380.0f - FollowCamera->GetUpVector() * 30.0f;
+			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), fireEmitterTemplate, EmitterTrans, true);
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), fireSound, BulletForward, FRotator::ZeroRotator, 1, 1, 0, soundAtt);
+		}
+		else
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), reloadSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, soundAtt, nullptr);
+		}
+	}
+	//}
 }
 
 
@@ -388,18 +397,17 @@ void AWhatTheBoxProjectCharacter::MulticastDamageProcess_Implementation()
 	if (curHP <= 0)
 	{
 		BoxBodyComp->SetVisibility(false);
-		DestroyedBoxBodyComp->SetVisibility(true);		
+		DestroyedBoxBodyComp->SetVisibility(true);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
+		UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
 		if(GetController()!=nullptr&&GetController()->IsLocalController())
-		{
-			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), explosionParticle, GetActorLocation(), FRotator::ZeroRotator, FVector(2), true);
-			UGameplayStatics::SpawnSoundAtLocation(GetWorld(), explosionSound, BoxBodyComp->GetComponentLocation(), FRotator::ZeroRotator, 0.5, 1, 0, nullptr, nullptr, true);
-			
+		{				
 			GetCharacterMovement()->StopActiveMovement();
 			GetCharacterMovement()->MaxWalkSpeed = 0;
 			//GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			//bUseControllerRotationYaw = false;
-			//FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
+			FollowCamera->PostProcessSettings.ColorSaturation = FVector4(0, 0, 0, 1);
 			respawnTimerUI->AddToViewport();
 			//GetController()->SetIgnoreMoveInput(true);
 			}
@@ -440,7 +448,7 @@ void AWhatTheBoxProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePro
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AWhatTheBoxProjectCharacter, isUsingKnife);
+	
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, bCanFire);
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curBulletCount);
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curHP);
