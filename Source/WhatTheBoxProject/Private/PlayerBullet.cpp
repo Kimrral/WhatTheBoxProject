@@ -46,8 +46,8 @@ APlayerBullet::APlayerBullet()
 		sphereComp->OnComponentBeginOverlap.AddDynamic(this, &APlayerBullet::OnOverlap);
 		sphereComp->SetGenerateOverlapEvents(true);
 
-		SetReplicateMovement(true);
-		SetReplicates(true);
+		//SetReplicateMovement(true);
+		//SetReplicates(true);
 
 }
 
