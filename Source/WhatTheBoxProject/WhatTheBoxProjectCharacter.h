@@ -105,8 +105,11 @@ public:
 	UPROPERTY(EditAnywhere)
 		TSubclassOf<class AKnifeDamageBox> knifeBoxFactory;
 	UPROPERTY(EditAnywhere)
+		TSubclassOf<class UPlayerInformationWidget> infoWidget;
+	UPROPERTY(EditAnywhere)
 	class UParticleSystem* fireEmitterTemplate;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		bool isGameStarted= false;
 	
 protected:
 

@@ -7,6 +7,10 @@
 #include "Components/TextBlock.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 
+void UPlayerInformationWidget::RefreshPlayer()
+{
+}
+
 void UPlayerInformationWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
@@ -29,3 +33,4 @@ void UPlayerInformationWidget::NativeTick(const FGeometry& MyGeometry, float InD
 	}
 
 }
+

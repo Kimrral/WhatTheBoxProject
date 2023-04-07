@@ -95,7 +95,7 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
-
+	
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -112,9 +112,18 @@ void AWhatTheBoxProjectCharacter::BeginPlay()
 	//crosshairUI->AddToViewport();
 
 	respawnTimerUI = CreateWidget<UUserWidget>(GetWorld(), respawnTimerUIFactory);
-
 	curBulletCount = maxBulletCount;
 	curHP = maxHP;
+
+	auto playerUI = CreateWidget<UPlayerInformationWidget>(GetWorld(), infoWidget);
+	if (playerUI != nullptr)
+	{
+		playerUI->AddToViewport(0);
+	}
+	
+
+
+	
 
 
 	
@@ -278,7 +287,8 @@ void AWhatTheBoxProjectCharacter::DieProcess()
 				ABoxPlayerController* cont = Cast<ABoxPlayerController>(GetController());			
 				if (cont != nullptr)
 				{						
-					cont->Possess(this);					
+					cont->Possess(this);
+		
 				}
 			}), 0.4f, false);
 		
@@ -456,5 +466,6 @@ void AWhatTheBoxProjectCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePro
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, bCanFire);
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curBulletCount);
 	DOREPLIFETIME(AWhatTheBoxProjectCharacter, curHP);
+	
 
 }

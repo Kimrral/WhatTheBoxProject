@@ -27,11 +27,15 @@ public:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UTextBlock* curBulText;	
 
+	class AWhatTheBoxProjectCharacter* player;
+
+	UFUNCTION()
+	void RefreshPlayer();
 
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 private:
-	class AWhatTheBoxProjectCharacter* player;
+	
 };
