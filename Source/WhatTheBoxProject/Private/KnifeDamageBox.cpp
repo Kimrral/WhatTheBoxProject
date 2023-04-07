@@ -52,36 +52,12 @@ void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor
 {
 	UE_LOG(LogTemp, Warning, TEXT("aaa"));
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
-// 	if (GetOwner() != nullptr)
-//  	{
-// 		UE_LOG(LogTemp, Warning, TEXT("bbb"));
+
 		if (HasAuthority())
 		{
-// 			if (Character != nullptr && Character->GetController() != nullptr)
-// 			{
-// 				//if (Character->GetController()->IsLocalController() != false)
-// 				//{
-// 				if (Character->GetHealth() <= 1)
-// 				{
-// 					AWhatTheBoxProjectCharacter* myOwner = Cast<AWhatTheBoxProjectCharacter>(GetOwner());
-// 					if (myOwner != nullptr)
-// 					{
-// 						myOwner->GetPlayerState()->SetScore(myOwner->GetPlayerState()->GetScore() + 1);
-// 						UE_LOG(LogTemp, Warning, TEXT("%d"), myOwner->GetPlayerState()->GetScore());
-// 					}
-// 				}
-
 				Character->ServerDamageProcess(-3);
 				Destroy();
-				//}
-			
-			//}
 		}
- //	}
-// 	else
-// 	{
-// 		return;
-// 	}
 
 }
 

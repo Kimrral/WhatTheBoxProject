@@ -41,11 +41,6 @@ void UBoxMainWidget::NativeConstruct()
 	// �÷��̾� ��Ʈ�ѷ�
 	PC = Cast<ABoxPlayerController>(GetOwningLocalPlayer()->GetPlayerController(GetWorld()));
 
-	// ��ŷ ������� �迭
-	textblockRankIdArray = { TXT_RankID1, TXT_RankID2, TXT_RankID3, TXT_RankID4 };
-	textblockRankScoreArray = { TXT_RankScore1, TXT_RankScore2, TXT_RankScore3, TXT_RankScore4 };
-	tempScoreArray = { tempScore1, tempScore2, tempScore3, tempScore4 };
-
 }
 
 void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -82,9 +77,7 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			//text_PlayerScore->SetText(FText::FromString(playerList));		
 	}	
 
-
-
-
+}
 
 void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 {
