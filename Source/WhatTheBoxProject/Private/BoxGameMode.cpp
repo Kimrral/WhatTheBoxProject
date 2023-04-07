@@ -9,7 +9,7 @@
 void ABoxGameMode::AddKillLog(const FString& KillerName, const FString& VictimName)
 {
 	// 킬로그에 추가
-	FString KillLogString = FString::Printf(TEXT("%s killed %s"), *KillerName, *VictimName);
+	FString KillLogString = FString::Printf(TEXT("%s killed %s\n"), *KillerName, *VictimName);
 	KillLog.Add(KillLogString);
 // 	FString KillMessage = KillerName + TEXT(" killed ") + VictimName;
 // 	KillLog.Add(KillMessage);

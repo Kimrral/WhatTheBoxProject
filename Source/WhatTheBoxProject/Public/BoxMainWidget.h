@@ -47,9 +47,17 @@ public:
 // 	// 게임스테이트
 // 	UPROPERTY(BlueprintReadWrite, Category = "Settings")
 // 	class ABoxGameStateBase* GS;
-	
 
+	class UWTBoxGameInstance* gameInstance;
 
+	//플레이어 점수정보 전역변수로 빼준 것
+	int32 playerScore;
+	FString playerName;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget), Category = "Score")
+	class UTextBlock* text_PlayerID;
+	/*UPROPERTY(EditAnywhere, meta = (BindWidget), Category = "Score")
+	class UTextBlock* text_PlayerScore;*/
 
 		// 타이머액터
 		UPROPERTY(BlueprintReadWrite, Category = "Timer")
@@ -60,23 +68,14 @@ public:
 		class AWhatTheBoxProjectCharacter* Player;
 	//--------------------순위ui부분--------------------//
 	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UVerticalBox* Vertical_Rank;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankID1;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankID2;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankID3;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankID4;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankScore1;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankScore2;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankScore3;
-	UPROPERTY(EditAnywhere, meta = (BindWidget) , Category = "Score")
-	class UTextBlock* TXT_RankScore4;
+	class UScrollBox* sbox_RankBox;
+
+	UPROPERTY(EditAnywhere, Category = "Score")
+	TSubclassOf <class URealTimeRankWidget> realTimeRank;
+	
+	//랭크 슬롯 추가하기
+	URealTimeRankWidget* rankSlot;
+
 
 	//--------------------순위ui부분--------------------//
 // 함수 부분

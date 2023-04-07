@@ -16,6 +16,7 @@
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
 // 점수를 위한 헤더추가
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/GameState.h"
 
 // Sets default values
 APlayerBullet::APlayerBullet()

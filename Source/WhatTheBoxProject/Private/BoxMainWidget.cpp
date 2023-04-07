@@ -6,7 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Components/TextBlock.h"
 #include "Components/EditableTextBox.h"
-#include "Components/VerticalBox.h"
+#include "Components/ScrollBox.h"
 #include "../WhatTheBoxProjectCharacter.h"
 #include "BoxGameMode.h"
 #include "Net/UnrealNetwork.h"
@@ -14,6 +14,7 @@
 #include "GameFrameWork/PlayerState.h"
 #include "BoxPlayerState.h"
 #include "BoxGameStateBase.h"
+#include "WTBoxGameInstance.h"
 
 void UBoxMainWidget::NativeConstruct()
 {
@@ -27,6 +28,10 @@ void UBoxMainWidget::NativeConstruct()
 
 	// 플레이어
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
+	gameInstance = Cast<UWTBoxGameInstance>(GetGameInstance());
+
+
 }
 
 void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -36,6 +41,7 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	/*UE_LOG(LogTemp, Warning, TEXT("%s"), GetWorld()->GetAuthGameMode() != nullptr ? *FString("HAS") : *FString("None"));*/
 
 	// 	AWhatTheBoxGameModeBase* gm = Cast< AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
+	ABoxGameStateBase* gs = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
 
 	if (inGameTimer != nullptr && this != nullptr)
 	{
@@ -51,16 +57,16 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 		for (const auto& ps : GS->GetPlayerListByScore())
 		{
-			FString playerName = ps->GetPlayerName();
-			int32 playerScore = ps->GetScore();
-			playerList.Append(FString::Printf(TEXT("%s : %d\n"), *playerName, playerScore));
-			//UE_LOG(LogTemp, Warning, TEXT("%s : %d"), *playerName, playerScore);
-		}
-
-		TXT_RankID1->SetText(FText::FromString(playerList));
-	}
-	
+			playerName = ps->GetPlayerName();
+			playerScore = ps->GetScore();
+			playerList.Append(FString::Printf(TEXT("%s_____________: %d\n"), *playerName, playerScore));
+			UE_LOG(LogTemp, Warning, TEXT("%s : %d"), *playerName, playerScore);
+		}		
+			text_PlayerID->SetText(FText::FromString(playerList));
+			//text_PlayerScore->SetText(FText::FromString(playerList));		
+	}	
 }
+
 
 void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 {
@@ -98,7 +104,7 @@ void UBoxMainWidget::RankingRefresh()
 void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
 {
 	// 킬로그를 출력한다.
-	TXT_KillLog->SetText(FText::FromString(Killer + " killed " + Victim));
+	//TXT_KillLog->SetText(FText::FromString(Killer + " killed " + Victim));
 }
 
 // 채팅인풋에 입력시 채팅로그에 출력

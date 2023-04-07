@@ -20,9 +20,10 @@ protected:
 public:
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UButton* btn_pingNumber;
+		class UButton* btn_pingNumber;
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* text_pingNumber;
+		class UTextBlock* text_pingNumber;
+
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UButton* btn_playerName;

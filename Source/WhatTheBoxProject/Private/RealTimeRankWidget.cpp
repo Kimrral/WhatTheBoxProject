@@ -1,12 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RankSlotWidget.h"
+#include "RealTimeRankWidget.h"
 #include "Components/TextBlock.h"
 
-
-void URankSlotWidget::NativeConstruct()
+void URealTimeRankWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-
 }

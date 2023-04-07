@@ -3,19 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameStateBase.h"
+#include "GameFramework/GameState.h"
 #include "BoxGameStateBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class WHATTHEBOXPROJECT_API ABoxGameStateBase : public AGameStateBase
+class WHATTHEBOXPROJECT_API ABoxGameStateBase : public AGameState
 {
 	GENERATED_BODY()
 
 public:
 	// 점수배열
 	TArray<class APlayerState*> GetPlayerListByScore();
-	
+
+	//TArray<class APlayerState*> GetGoPlayerListByScore();
 };
