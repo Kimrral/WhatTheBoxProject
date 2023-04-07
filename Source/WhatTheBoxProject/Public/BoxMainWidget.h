@@ -106,6 +106,8 @@ public:
 
 	void RankingRefresh();
 
+	void ResetScoreBeforeGameEnd();
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
 	//UFUNCTION()
 	//void	UpdateKillLog(const TArray<FString>& KillLog)

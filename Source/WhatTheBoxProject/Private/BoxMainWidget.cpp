@@ -53,22 +53,23 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		inGameTimer->Server_UpdateTimerUI();
 	}
 
+
 	// 플레이어 점수
 	FString playerList;
-	RankingRefresh();
+//	RankingRefresh();
 #pragma region regionName
-	//if (GetWorld()->GetGameState() != nullptr)
-	//{
-	//	ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
-	//	for (const auto& ps : GS->GetPlayerListByScore())
-	//	{
-	//		FString playerName = ps->GetPlayerName();
-	//		int32 playerScore = ps->GetScore();
-	//		playerList.Append(FString::Printf(TEXT("%s : %d\n"), *playerName, playerScore));
-	//	}
+	if (GetWorld()->GetGameState() != nullptr)
+	{
+		ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
+		for (const auto& ps : GS->GetPlayerListByScore())
+		{
+			FString playerName = ps->GetPlayerName();
+			int32 playerScore = ps->GetScore();
+			playerList.Append(FString::Printf(TEXT("%s : %d\n"), *playerName, playerScore));
+		}
 
-	//	TXT_RankID1->SetText(FText::FromString(playerList));
-	//}
+		TXT_RankID1->SetText(FText::FromString(playerList));
+	}
 #pragma endregion regionName
 }
 
@@ -129,6 +130,7 @@ void UBoxMainWidget::RankingRefresh()
 // 	}
 #pragma endregion
 
+#pragma region AnotherRank
 	// playerstate array 가져오기
 	auto playerStateArray = GetWorld()->GetGameState()->PlayerArray;
 
@@ -153,6 +155,7 @@ void UBoxMainWidget::RankingRefresh()
 	{
 		winnerID = playerStateArray[0]->GetPlayerName();
 	}
+#pragma endregion
 }
 
 void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
@@ -170,6 +173,15 @@ void UBoxMainWidget::PrintChatLog(FString Chat)
 void UBoxMainWidget::OnChatInputEnter()
 {
 
+}
+
+
+void UBoxMainWidget::ResetScoreBeforeGameEnd()
+{
+	tempScore1 = 0;
+	tempScore2 = 0;
+	tempScore3 = 0;
+	tempScore4 = 0;
 }
 
 void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
