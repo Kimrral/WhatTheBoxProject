@@ -12,25 +12,39 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerActor.h"
 #include "GameFrameWork/PlayerState.h"
+#include "GameFrameWork/GameStateBase.h"
 #include "BoxPlayerState.h"
 #include "BoxGameStateBase.h"
 #include "WTBoxGameInstance.h"
+#include "BoxPlayerController.h"
+#include "EngineUtils.h"
+
 
 void UBoxMainWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	// °ÔÀÓ¸ðµå
+	// ï¿½ï¿½ï¿½Ó¸ï¿½ï¿½
 	GM = Cast<AWhatTheBoxGameModeBase>(GetWorld()->GetAuthGameMode());
 
-	// °ÔÀÓÅ¸ÀÌ¸Ó¾×ÅÍ
+	// ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ì¸Ó¾ï¿½ï¿½ï¿½
 	inGameTimer = Cast<ATimerActor>(UGameplayStatics::GetActorOfClass(GetWorld(), ATimerActor::StaticClass()));
 
-	// ÇÃ·¹ÀÌ¾î
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½
 	Player = Cast<AWhatTheBoxProjectCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+
 
 	gameInstance = Cast<UWTBoxGameInstance>(GetGameInstance());
 
+
+
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½Æ®ï¿½Ñ·ï¿½
+	PC = Cast<ABoxPlayerController>(GetOwningLocalPlayer()->GetPlayerController(GetWorld()));
+
+	// ï¿½ï¿½Å· ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­
+	textblockRankIdArray = { TXT_RankID1, TXT_RankID2, TXT_RankID3, TXT_RankID4 };
+	textblockRankScoreArray = { TXT_RankScore1, TXT_RankScore2, TXT_RankScore3, TXT_RankScore4 };
+	tempScoreArray = { tempScore1, tempScore2, tempScore3, tempScore4 };
 
 }
 
@@ -48,15 +62,17 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		inGameTimer->Server_UpdateTimerUI();
 	}
 
-	// ÇÃ·¹ÀÌ¾î Á¡¼ö
+
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
 	FString playerList;
+//	RankingRefresh();
 
 	if (GetWorld()->GetGameState() != nullptr)
 	{
 		ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
-
 		for (const auto& ps : GS->GetPlayerListByScore())
 		{
+
 			playerName = ps->GetPlayerName();
 			playerScore = ps->GetScore();
 			playerList.Append(FString::Printf(TEXT("%s_____________: %d\n"), *playerName, playerScore));
@@ -65,12 +81,14 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			text_PlayerID->SetText(FText::FromString(playerList));
 			//text_PlayerScore->SetText(FText::FromString(playerList));		
 	}	
-}
+
+
+
 
 
 void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 {
-	// ³²Àº ½Ã°£À» ÅØ½ºÆ®·Î Ãâ·ÂÇÑ´Ù.
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
 	TXT_GameTimeMin->SetText(FText::AsNumber(min));
 	TXT_GameTimeSec->SetText(FText::AsNumber(sec));
@@ -83,7 +101,7 @@ void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 // 	if (inGameTimer != nullptr)
 // 	{
 // 		
-// 		// ¸¸¾à GameTimeSecÀÌ 10º¸´Ù ÀûÀ¸¸é GameTimeSec ¾Õ¿¡ 0À» ºÙ¿©ÁØ´Ù.
+// 		// ï¿½ï¿½ï¿½ï¿½ GameTimeSecï¿½ï¿½ 10ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ GameTimeSec ï¿½Õ¿ï¿½ 0ï¿½ï¿½ ï¿½Ù¿ï¿½ï¿½Ø´ï¿½.
 // 		if (inGameTimer->GameTimeSec < 10)
 // 		{
 // 			TXT_GameTimeSec->SetText(FText::FromString("0" + FString::FromInt(inGameTimer->GameTimeSec)));
@@ -94,20 +112,72 @@ void UBoxMainWidget::PrintRemainingTime(int32 min, int32 sec)
 
 void UBoxMainWidget::RankingRefresh()
 {
-	//ABoxGameStateBase ¿¡ ÀÖ´Â GetPlayerListByScore() ÇÔ¼ö ºÒ·¯¿À±â
-	ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
-	TArray<APlayerState*> PlayerList = GS->GetPlayerListByScore();
+#pragma region Rank
+// 	//ABoxGameStateBase ï¿½ï¿½ ï¿½Ö´ï¿½ GetPlayerListByScore() ï¿½Ô¼ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½
+// 	ABoxGameStateBase* GS = Cast<ABoxGameStateBase>(GetWorld()->GetGameState());
+// 	TArray<APlayerState*> PlayerList = GS->GetPlayerListByScore();
+// 
+// 	// ï¿½ï¿½ï¿½Äµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å·Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½
+// 	for (int i = 0; i < PlayerList.Num(); i++)
+// 	{
+// 		ABoxPlayerState* PS = Cast<ABoxPlayerState>(PlayerList[i]);
+// 		FString PlayerName = PS->GetPlayerName();
+// 		int32 PlayerScore = PS->GetScore();
+// 		switch (i)
+// 		{
+// 		case 0:
+// 			TXT_RankID1->SetText(FText::FromString(PlayerName + " : " + FString::FromInt(PlayerScore)));
+// 			break;
+// 		case 1:
+// 			TXT_RankID2->SetText(FText::FromString(PlayerName + " : " + FString::FromInt(PlayerScore)));
+// 			break;
+// 		case 2:
+// 			TXT_RankID3->SetText(FText::FromString(PlayerName + " : " + FString::FromInt(PlayerScore)));
+// 			break;
+// 		case 3:
+// 			TXT_RankID4->SetText(FText::FromString(PlayerName + " : " + FString::FromInt(PlayerScore)));
+// 			break;
+// 		default:
+// 			break;
+// 		}
+// 	}
+#pragma endregion
 
+#pragma region AnotherRank
+	// playerstate array ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	auto playerStateArray = GetWorld()->GetGameState()->PlayerArray;
 
+	playerStateArray.Sort([](const APlayerState& A, const APlayerState& B)
+		{
+			return A.GetScore() > B.GetScore();
+		});
+
+	// ï¿½ï¿½ï¿½Äµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å·Ç¥ï¿½ï¿½ ï¿½ï¿½ï¿½
+	for (int i = 0; i < playerStateArray.Num(); i++)
+	{
+		textblockRankIdArray[i]->SetVisibility(ESlateVisibility::Visible);
+		textblockRankIdArray[i]->SetText(FText::FromString(playerStateArray[i]->GetPlayerName()));
+
+		textblockRankScoreArray[i]->SetVisibility(ESlateVisibility::Visible);
+		if (tempScoreArray[i] < playerStateArray[i]->GetScore())
+		{
+			textblockRankScoreArray[i]->SetText(FText::AsNumber(tempScoreArray[i]));
+		}
+	}
+	if (!playerStateArray.IsEmpty())
+	{
+		winnerID = playerStateArray[0]->GetPlayerName();
+	}
+#pragma endregion
 }
 
 void UBoxMainWidget::PrintKillLog(FString Killer, FString Victim)
 {
-	// Å³·Î±×¸¦ Ãâ·ÂÇÑ´Ù.
+	// Å³ï¿½Î±×¸ï¿½ ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 	//TXT_KillLog->SetText(FText::FromString(Killer + " killed " + Victim));
 }
 
-// Ã¤ÆÃÀÎÇ²¿¡ ÀÔ·Â½Ã Ã¤ÆÃ·Î±×¿¡ Ãâ·Â
+// Ã¤ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ ï¿½Ô·Â½ï¿½ Ã¤ï¿½Ã·Î±×¿ï¿½ ï¿½ï¿½ï¿½
 void UBoxMainWidget::PrintChatLog(FString Chat)
 {
 
@@ -116,6 +186,15 @@ void UBoxMainWidget::PrintChatLog(FString Chat)
 void UBoxMainWidget::OnChatInputEnter()
 {
 
+}
+
+
+void UBoxMainWidget::ResetScoreBeforeGameEnd()
+{
+	tempScore1 = 0;
+	tempScore2 = 0;
+	tempScore3 = 0;
+	tempScore4 = 0;
 }
 
 void UBoxMainWidget::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

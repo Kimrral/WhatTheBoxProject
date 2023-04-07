@@ -320,7 +320,8 @@ void AWhatTheBoxProjectCharacter::ServerFire_Implementation()
 		auto pastPos = CutterKnifeComp->GetRelativeTransform();
 		UKismetSystemLibrary::MoveComponentTo(CutterKnifeComp, CutterKnifeComp->GetRelativeLocation(), FRotator(43.476491, -33.766974, -51.922897), false, false, 0.15f, true, EMoveComponentAction::Type::Move, LatentInfo);
 
-		GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward + BoxBodyComp->GetForwardVector() * 90.0f, FRotator::ZeroRotator, params);
+		AKnifeDamageBox* Knife =  GetWorld()->SpawnActor<AKnifeDamageBox>(knifeBoxFactory, KnifeForward + BoxBodyComp->GetForwardVector() * 90.0f, FRotator::ZeroRotator, params);
+		Knife->SetOwner(this);
 
 		ResetKnifeLocation();
 

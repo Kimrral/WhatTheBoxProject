@@ -8,6 +8,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "WhatTheBoxProject/WhatTheBoxProjectCharacter.h"
+// 점수추가
+#include "GameFramework/PlayerState.h"
 
 // Sets default values
 AKnifeDamageBox::AKnifeDamageBox()
@@ -42,22 +44,45 @@ void AKnifeDamageBox::BeginPlay()
 void AKnifeDamageBox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void AKnifeDamageBox::OnOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	UE_LOG(LogTemp, Warning, TEXT("aaa"));
 	Character = Cast<AWhatTheBoxProjectCharacter>(OtherActor);
-	if (HasAuthority())
-	{
-		if (Character != nullptr)
+// 	if (GetOwner() != nullptr)
+//  	{
+// 		UE_LOG(LogTemp, Warning, TEXT("bbb"));
+		if (HasAuthority())
 		{
-			Character->ServerDamageProcess(-3);
+// 			if (Character != nullptr && Character->GetController() != nullptr)
+// 			{
+// 				//if (Character->GetController()->IsLocalController() != false)
+// 				//{
+// 				if (Character->GetHealth() <= 1)
+// 				{
+// 					AWhatTheBoxProjectCharacter* myOwner = Cast<AWhatTheBoxProjectCharacter>(GetOwner());
+// 					if (myOwner != nullptr)
+// 					{
+// 						myOwner->GetPlayerState()->SetScore(myOwner->GetPlayerState()->GetScore() + 1);
+// 						UE_LOG(LogTemp, Warning, TEXT("%d"), myOwner->GetPlayerState()->GetScore());
+// 					}
+// 				}
 
-			this->Destroy();
+				Character->ServerDamageProcess(-3);
+				Destroy();
+				//}
+			
+			//}
 		}
-	}
+ //	}
+// 	else
+// 	{
+// 		return;
+// 	}
+
 }
 
 void AKnifeDamageBox::ChangeBoxMesh()
