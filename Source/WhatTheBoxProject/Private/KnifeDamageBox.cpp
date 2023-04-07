@@ -23,8 +23,8 @@ AKnifeDamageBox::AKnifeDamageBox()
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKnifeDamageBox::OnOverlap);
 	boxComp->SetGenerateOverlapEvents(true);
 
-	SetReplicateMovement(true);
-	SetReplicates(true);
+	//SetReplicateMovement(true);
+	//SetReplicates(true);
 
 }
 
