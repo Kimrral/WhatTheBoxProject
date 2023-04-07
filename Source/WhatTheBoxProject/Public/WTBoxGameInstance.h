@@ -39,6 +39,8 @@ public:
 	FName sessionID;
 	TSharedPtr<FOnlineSessionSearch> sessionSearch;
 
+	FSessionInfo sessionSearchInfo;
+
 	//세션이 나타날 최대 갯수
 	UPROPERTY(EditDefaultsOnly, Category = GameSettings)
 	int32 maxSearchCount = 20;

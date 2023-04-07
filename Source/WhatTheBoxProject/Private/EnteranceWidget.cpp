@@ -13,7 +13,6 @@
 #include "Components/WidgetSwitcher.h"
 #include "WTBoxGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "WTBoxGameStateBase.h"
 #include "EnteranceWidget.h"
 
 

@@ -16,3 +16,9 @@ TArray<APlayerState*> ABoxGameStateBase::GetPlayerListByScore()
 	});
 	return PlayerList;
 }
+/*
+TArray<APlayerState*> ABoxGameStateBase::GetGoPlayerListByScore()
+{
+
+}
+*/

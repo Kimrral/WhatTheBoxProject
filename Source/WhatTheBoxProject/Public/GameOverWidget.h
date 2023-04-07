@@ -22,8 +22,13 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite, meta = (BindWidget))
 	class UScrollBox* sbox_RankList;
 
-	UFUNCTION()
-	void AddNewSlot(float ping, FString playerName, int32 score, int32 killSocre, int32 death);
+//	UWTBoxGameInstance* gameInstance;
+//	AGameStateBase* gameState;
+//	UBoxMainWidget* boxMainWidget;
 
-	
+	UFUNCTION()
+	void AddNewSlot();
+	//float ping, FString playerName, int32 score, int32 killSocre, int32 death
+	//void ListUpSlots();
+
 };
