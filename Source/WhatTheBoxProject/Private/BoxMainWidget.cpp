@@ -62,7 +62,7 @@ void UBoxMainWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			playerList.Append(FString::Printf(TEXT("%s_____________: %d\n"), *playerName, playerScore));
 			UE_LOG(LogTemp, Warning, TEXT("%s : %d"), *playerName, playerScore);
 		}		
-			text_PlayerID->SetText(FText::FromString(playerList));
+			//text_PlayerID->SetText(FText::FromString(playerList));
 			//text_PlayerScore->SetText(FText::FromString(playerList));		
 	}	
 }
